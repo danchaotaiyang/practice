@@ -2,16 +2,21 @@
 <div>
     关于
     <chart-line class="line-bottom" :data="data" :width="width" height="19" stroke="#cccccc"></chart-line>
+    <div class="drags">
+        <div class="draggable" v-drag>可以拖拽</div>
+
+    </div>
 </div>
 </template>
 
 <script>
-import chartLine from '@/basic/chartLine';
+import chartLine from '@/basic/chartLine.vue';
 export default {
     components: {chartLine},
     data() {
         return {
             width: 600,
+            height: 400,
             data: []
         }
     },
@@ -40,6 +45,17 @@ export default {
 path {
     fill: none;
     stroke: #76BF8A;
+}
+
+.drags {
+    position: relative;
+    width: 600px;
+    height: 400px;
+    background-color: #333;
+}
+
+.draggable {
+    background-color: red;
 }
 
 </style>
