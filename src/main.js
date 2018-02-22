@@ -3,7 +3,7 @@
 import Vue from 'vue'
 import App from './App'
 import router from './router'
-
+import '@/assets/css/layout.scss';
 import '@/directives/draggable';
 
 /* eslint-disable no-new */

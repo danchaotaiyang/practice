@@ -3,14 +3,14 @@
     关于
     <chart-line class="line-bottom" :data="data" :width="width" height="19" stroke="#cccccc"></chart-line>
     <div class="drags">
-        <div class="draggable" v-drag>可以拖拽</div>
-
+        <div class="draggable" v-draggable:relative>可以拖拽</div>
     </div>
 </div>
 </template>
 
 <script>
 import chartLine from '@/basic/chartLine.vue';
+
 export default {
     components: {chartLine},
     data() {
@@ -45,6 +45,7 @@ export default {
 path {
     fill: none;
     stroke: #76BF8A;
+    position: relative;
 }
 
 .drags {
