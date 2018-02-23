@@ -5,14 +5,15 @@
     <div class="drags">
         <div class="draggable" v-draggable:absolute>可以拖拽</div>
     </div>
+    <hunt v-draggable:fixed></hunt>
 </div>
 </template>
 
 <script>
-import chartLine from '@/basic/chartLine';
-
+import ChartLine from '@/basic/chartLine';
+import Hunt from '@/components/hunt';
 export default {
-    components: {chartLine},
+    components: {ChartLine, Hunt},
     data() {
         return {
             width: 600,

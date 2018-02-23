@@ -5,7 +5,7 @@ export const draggable = Vue.directive('draggable', {
         const style = {position: arg, cursor: 'pointer', userSelect: 'none'};
         Object.keys(style).forEach(i => el.style[i] = style[i]);
     },
-    inserted(el, {arg}) {
+    inserted(el, {arg, modifiers}) {
         const drag = {
             setRange() {
                 let range = arg === 'fixed' ? document.body : el.parentNode;
@@ -23,8 +23,9 @@ export const draggable = Vue.directive('draggable', {
             }
         };
         drag.setRange();
-        drag.setPosition({left: Math.random() * el.maxW, top: Math.random() * el.maxH});
-
+        if (modifiers.random) {
+            drag.setPosition({left: Math.random() * el.maxW, top: Math.random() * el.maxH});
+        }
         el.onmousedown = ({clientX, clientY}) => {
             let disX = clientX - el.offsetLeft, disY = clientY - el.offsetTop;
             document.onmousemove = ({clientX, clientY}) => {

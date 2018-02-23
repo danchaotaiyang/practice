@@ -10,7 +10,8 @@ export default {
 }
 </script>
 
-<style>
+<style lang="scss" rel="stylesheet/scss">
+@import "assets/css/layout";
 body {
     margin: 0;
 }
