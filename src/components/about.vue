@@ -3,7 +3,8 @@
     关于
     <chart-line class="line-bottom" :data="data" :width="width" height="19" stroke="#cccccc"></chart-line>
     <div class="drags">
-        <div class="draggable" v-draggable:absolute.random>可以拖拽</div>
+        <div class="draggable" v-draggable:fixed.random.range>可以拖拽</div>
+        <div class="draggable" v-draggable:fixed.random>可以拖拽可以拖拽可以拖拽</div>
     </div>
     <hunt v-draggable:fixed.center></hunt>
 </div>
@@ -51,6 +52,7 @@ export default {
 }
 
 .draggable {
+    display: block;
     background-color: #f60;
     color: #fff;
 }
