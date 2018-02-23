@@ -6,13 +6,16 @@ export const draggable = Vue.directive('draggable', {
         Object.keys(style).forEach(i => el.style[i] = style[i]);
     },
     inserted(el, {arg, modifiers}) {
+        const {random, center} = modifiers;
         const drag = {
             setRange() {
-                let range = arg === 'fixed' ? document.body : el.parentNode;
+                el.range = arg === 'fixed' ? document.body : el.parentNode;
+                el.ranW = el.range.clientWidth;
+                el.ranH = el.range.clientHeight;
                 el.minW = 0;
                 el.minH = 0;
-                el.maxW = range.clientWidth - el.clientWidth;
-                el.maxH = range.clientHeight - el.clientHeight;
+                el.maxW = el.ranW - el.clientWidth;
+                el.maxH = el.ranH - el.clientHeight;
             },
             setPosition({left, top}) {
                 const position = {
@@ -23,8 +26,11 @@ export const draggable = Vue.directive('draggable', {
             }
         };
         drag.setRange();
-        if (modifiers.random) {
+        if (random) {
             drag.setPosition({left: Math.random() * el.maxW, top: Math.random() * el.maxH});
+        }
+        if (center) {
+            drag.setPosition({left: el.maxW / 2, top: el.maxH / 2});
         }
         el.onmousedown = ({clientX, clientY}) => {
             let disX = clientX - el.offsetLeft, disY = clientY - el.offsetTop;

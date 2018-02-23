@@ -3,9 +3,9 @@
     关于
     <chart-line class="line-bottom" :data="data" :width="width" height="19" stroke="#cccccc"></chart-line>
     <div class="drags">
-        <div class="draggable" v-draggable:absolute>可以拖拽</div>
+        <div class="draggable" v-draggable:absolute.random>可以拖拽</div>
     </div>
-    <hunt v-draggable:fixed></hunt>
+    <hunt v-draggable:fixed.center></hunt>
 </div>
 </template>
 
