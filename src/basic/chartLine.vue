@@ -12,19 +12,20 @@ export default {
     props: {
         width: {
             type: [Number, String],
-            default: 100,
-            validator: v => v >= 12
+            default: 100
         },
         height: {
             type: [Number, String],
-            default: 50,
-            validator: v => v >= 12
+            default: 50
         },
         fill: {
             type: String,
             default: 'none'
         },
-        stroke: String,
+        stroke: {
+            type: String,
+            default: '#000000'
+        },
         data: {
             type: Array,
             default: () => []
