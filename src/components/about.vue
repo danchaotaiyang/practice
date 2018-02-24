@@ -7,14 +7,21 @@
         <div class="draggable" v-draggable:fixed.random>可以拖拽可以拖拽可以拖拽</div>
     </div>
     <hunt v-draggable:fixed.center></hunt>
+    <draggable mode="fixed" :confine="true">
+        <div slot="head">
+            1
+        </div>
+        <div slot="body">2</div>
+    </draggable>
 </div>
 </template>
 
 <script>
 import ChartLine from '@/basic/chartLine';
 import Hunt from '@/components/hunt';
+import Draggable from '@/components/draggable';
 export default {
-    components: {ChartLine, Hunt},
+    components: {ChartLine, Hunt, Draggable},
     data() {
         return {
             width: 600,
