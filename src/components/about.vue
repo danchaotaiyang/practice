@@ -11,7 +11,7 @@
         <div slot="head">
             1
         </div>
-        <div slot="body">2</div>
+        <div>2</div>
     </draggable>
 </div>
 </template>

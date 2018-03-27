@@ -4,7 +4,7 @@
         <slot name="head"></slot>
     </div>
     <div ref="body">
-        <slot name="body"></slot>
+        <slot></slot>
     </div>
 </div>
 </template>

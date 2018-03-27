@@ -1,11 +1,14 @@
 <template>
 <div class="hunter" v-if="hunting">
-    <input type="text" placeholder="1">
+    <input type="text" :placeholder="placeholder">
 </div>
 </template>
 
 <script>
 export default {
+    props: {
+        placeholder: ''
+    },
     data() {
         return {
             hunting: false
@@ -18,12 +21,12 @@ export default {
         _keyShift() {
             if (new Date().getTime() - this.timeStamp < 600) {
                 console.log(1);
-                this._showHunter();
+                this._toggleHunter();
             }
             this._setTimeStamp();
         },
-        _showHunter() {
-            this.hunting = true;
+        _toggleHunter() {
+            this.hunting = !this.hunting;
         }
     },
     created() {
@@ -42,5 +45,6 @@ export default {
     left: 0;
     width: 600px;
     height: 50px;
+    border: 1px solid #ccc;
 }
 </style>
