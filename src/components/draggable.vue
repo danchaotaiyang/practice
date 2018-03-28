@@ -1,11 +1,6 @@
 <template>
 <div class="drag-wrap" ref="wrap" :style="style" @mousedown="startUp">
-    <div ref="head" v-if="$slots.head">
-        <slot name="head"></slot>
-    </div>
-    <div ref="body">
-        <slot></slot>
-    </div>
+    <slot></slot>
 </div>
 </template>
 

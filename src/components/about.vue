@@ -5,13 +5,11 @@
     <div class="drags">
         <div class="draggable" v-draggable:fixed.random.confine>可以拖拽</div>
         <div class="draggable" v-draggable:absolute.random.confine>可以拖拽可以拖拽可以拖拽</div>
+        <div class="draggable" v-draggable:absolute.random>依然可以拖拽</div>
     </div>
     <hunt v-draggable:fixed.center></hunt>
     <draggable confine>
-        <div slot="head">
-            1
-        </div>
-        <div>2</div>
+        <div>测试拖拽</div>
     </draggable>
 </div>
 </template>
