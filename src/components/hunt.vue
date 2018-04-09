@@ -1,5 +1,5 @@
 <template>
-<div class="hunter" v-if="hunting">
+<div class="hunter" v-show="hunting">
     <input type="text" :placeholder="placeholder">
 </div>
 </template>
