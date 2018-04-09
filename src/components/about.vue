@@ -8,9 +8,12 @@
         <div class="draggable" v-draggable:absolute.random>依然可以拖拽</div>
     </div>
     <hunt v-draggable:fixed.center></hunt>
-    <draggable confine>
-        <div>测试拖拽</div>
-    </draggable>
+    <div class="drags">
+        <draggable mode="absolute" confine random>
+            <div style="color: #ccc">测试拖拽</div>
+        </draggable>
+
+    </div>
 </div>
 </template>
 

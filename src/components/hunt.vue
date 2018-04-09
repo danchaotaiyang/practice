@@ -7,7 +7,14 @@
 <script>
 export default {
     props: {
-        placeholder: ''
+        interval: {
+            type: Number,
+            default: 600
+        },
+        placeholder: {
+            type: String,
+            default: ''
+        }
     },
     data() {
         return {
@@ -19,8 +26,7 @@ export default {
             this.timeStamp = new Date().getTime();
         },
         _keyShift() {
-            if (new Date().getTime() - this.timeStamp < 600) {
-                console.log(1);
+            if (new Date().getTime() - this.timeStamp < this.interval) {
                 this._toggleHunter();
             }
             this._setTimeStamp();
