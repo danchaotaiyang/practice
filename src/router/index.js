@@ -17,6 +17,10 @@ export default new Router({
         {
             path: '/about',
             component: (resolve) => require(['@/components/about'], resolve)
+        },
+        {
+            path: '/tab',
+            component: (resolve) => require(['@/components/tab'], resolve)
         }
     ]
 });
