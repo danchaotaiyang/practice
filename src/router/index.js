@@ -21,6 +21,10 @@ export default new Router({
         {
             path: '/tab',
             component: (resolve) => require(['@/components/tab'], resolve)
+        },
+        {
+            path: '/lines',
+            component: (resolve) => require(['@/components/test'], resolve)
         }
     ]
 });
