@@ -1,6 +1,7 @@
 <template>
 <div class="main-wrap">
     <bi-line-s :data="initsigndata.data" :options="lineOption" :width="800" :height="300" domainType="time" :refresh.sync="refresh"></bi-line-s>
+    <button @click="update">更新</button>
 </div>
 </template>
 
@@ -10,10 +11,10 @@ import BiLineS from '@/components/biLineS';
 export default {
     data() {
         return {
+            refresh: false,
             lineOption: {
                 domainType: 'time'
             },
-            refresh: false,
             initsigndata: {
                 data: [
                     {
@@ -266,9 +267,9 @@ export default {
         };
     },
     components: {BiLineS},
-    mounted() {
-        setInterval(() => {
-            let ary = [7, 1, 9, 112, 6, 3, 2, 91];
+    methods: {
+        update() {
+            let ary = [57, 81, 99, 112, 36, 36, 26, 91];
             this.initsigndata.data = this.initsigndata.data.map((item) => {
                 let index = Math.random() * ary.length - 1 | 0;
                 item.list.forEach((list) => {
@@ -277,13 +278,13 @@ export default {
                 return item;
             });
             this.refresh = true;
-        }, 3500);
+        }
     }
 };
 </script>
 
 <style scoped>
-.bi {
-    width: 100%;
+.main-wrap {
+    padding: 50px;
 }
 </style>

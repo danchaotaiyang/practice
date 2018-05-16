@@ -2,7 +2,8 @@
 <div class="line" ref="line">
     <svg ref="svg">
         <g class="area" ref="area">
-            <g class="paths" ref="paths"></g>
+            <g class="legend" ref="legend"></g>
+            <g class="paths" ref="paths" v-show="screen.length"></g>
             <g class="axisX" ref="axisX"></g>
             <g class="axisY" ref="axisY"></g>
         </g>
@@ -17,13 +18,15 @@ import {colors} from '@/components/colors';
 const parseDate = d3.timeParse('%Y-%m-%d');
 
 let defaultOptions = {
-    margin: {top: 20, right: 24, bottom: 20, left: 30},
+    margin: {top: 45, right: 30, bottom: 24, left: 30},
     domainType: 'number'
 };
 
 export default {
     data() {
-        return {};
+        return {
+            exclude: []
+        };
     },
     props: {
         width: {
@@ -42,12 +45,23 @@ export default {
             type: Object, default: () => ({})
         },
         curve: {
-            type: String, default: ''
+            type: String, default: 'curveLinear'
+        },
+        duration: {
+            type: Number, default: 400
         }
     },
     computed: {
+        dataFormat() {
+            return [...this.data];
+        },
+        screen() {
+            let data = [];
+            this.dataFormat.forEach((d, i) => !this.exclude[i] && data.push(d));
+            return data;
+        },
         datum() {
-            return d3.merge(this.data.map(item => item.list));
+            return d3.merge(this.screen.map(item => item.list));
         },
         domainX() {
             return d3.extent(this.datum, d => d.label);
@@ -58,6 +72,9 @@ export default {
         option() {
             return Object.assign({}, defaultOptions, this.options);
         },
+        margin() {
+            return this.option.margin;
+        },
         clientWidth() {
             return this.width !== 0 ? this.width : this.$refs.line.clientWidth;
         },
@@ -65,31 +82,27 @@ export default {
             return this.height !== 0 ? this.height : this.$refs.line.clientHeight;
         },
         top() {
-            return this.option.margin.top;
+            return this.margin.top;
         },
         right() {
-            return this.clientWidth - this.option.margin.right;
+            return this.clientWidth - this.margin.right;
         },
         bottom() {
-            return this.clientHeight - this.option.margin.bottom;
+            return this.clientHeight - this.margin.bottom;
         },
         left() {
-            return this.option.margin.left;
+            return this.margin.left;
         },
         scaleX() {
             let scale;
             switch (this.option.domainType) {
                 case 'time':
-                    scale = d3
-                        .scaleTime();
+                    scale = d3.scaleTime();
                     break;
                 default:
-                    scale = d3
-                        .scaleLinear();
+                    scale = d3.scaleLinear();
             }
-            scale
-                .range([this.left, this.right])
-                .domain(this.domainX);
+            scale.range([this.left, this.right]).domain(this.domainX);
             return scale;
         },
         scaleY() {
@@ -100,20 +113,15 @@ export default {
                 .domain(this.domainY);
             return scale;
         },
-        line() {
-            let lines = d3
-                .line()
+        lineFrom() {
+            return d3.line().x(d => this.scaleX(d.label)).y(this.bottom);
+        },
+        lineTo() {
+            return d3.line()
                 .x(d => this.scaleX(d.label))
-                .y(d => this.scaleY(d.value));
-
-            if (this.curve && d3[this.curve]) {
-                lines.curve(d3[this.curve]);
-            } else if (d3[this.curve] === undefined) {
-                console.warn(`curve: ${this.curve} 为无效值`);
-            }
-
-            return lines;
-        }
+                .y(d => this.scaleY(d.value))
+                .curve(d3[this.curve]);
+        },
     },
     methods: {
         createSvg() {
@@ -125,20 +133,64 @@ export default {
                 .append('clipPath')
                 .attr('id', 'clipPath')
                 .append('rect')
-                .attr('width', this.right - this.left)
-                .attr('height', this.bottom - this.top)
+                .attr('width', this.right - this.left + 2)
+                .attr('height', this.bottom - this.top + 1)
                 .attr('x', this.left)
-                .attr('y', this.top);
+                .attr('y', this.top - 1);
+
+            if (this.screen.length === 0) return;
+
+            let legend = d3
+                .select(this.$refs.legend)
+                .attr('transform', `translate(${this.left}, ${this.top - 30})`)
+                .selectAll('g')
+                .data(this.screen)
+                .enter();
+
+            let legendGroup = legend
+                .append('g')
+                .style('cursor', 'pointer')
+                .attr('transform', (d, i) => {
+                    return `translate(${i * (d.title.length * 20)}, 0)`;
+                })
+                .on('click', (d, i, t) => {
+                    this.exclude = this.exclude.map((item, index) => {
+                        return index === i ? !item : item;
+                    });
+                    let lg = d3
+                        .select(t[i])
+                        .transition()
+                        .duration(this.duration);
+                    lg
+                        .select('rect')
+                        .attr('fill', () => this.exclude[i] ? '#ddd' : colors[i]);
+                    lg
+                        .select('text')
+                        .attr('fill', () => this.exclude[i] ? '#ddd' : null);
+                });
+
+            legendGroup
+                .append('rect')
+                .attr('width', 14)
+                .attr('height', 14)
+                .attr('fill', (d, i) => colors[i]);
+
+            legendGroup
+                .append('text')
+                .text(d => d.title)
+                .attr('x', 18)
+                .attr('y', 12);
 
             let paths = d3
                 .select(this.$refs.paths)
-                .selectAll('.path')
-                .data(this.data)
-                .enter();
+                .selectAll('path')
+                .data(this.screen);
 
-            paths
+            let enter = paths.enter();
+            let exit = paths.exit();
+
+            enter
                 .append('path')
-                .attr('class', 'path')
                 .datum(d => d.list)
                 .attr('fill', 'none')
                 .attr('stroke', (d, i) => colors[i])
@@ -146,58 +198,63 @@ export default {
                 .attr('stroke-linejoin', 'round')
                 .attr('stroke-linecap', 'round')
                 .attr('clip-path', 'url(#clipPath)')
-                .attr('d', this.line)
+                .attr('d', this.lineFrom)
                 .transition()
-                .duration(1200);
+                .duration(this.duration)
+                .attr('d', this.lineTo);
 
-            paths
-                .exit()
+            exit
+                .attr('opacity', 1)
+                .transition()
+                .duration(this.duration)
+                .attr('opacity', 0)
                 .remove();
 
-            this.calculateAxis();
+            this.axis();
         },
-        calculateAxis() {
+        axis() {
             d3
                 .select(this.$refs.axisX)
                 .attr('transform', `translate(0, ${this.bottom})`)
                 .transition()
-                .duration(500)
+                .duration(this.duration)
                 .call(d3.axisBottom(this.scaleX).ticks(d3.timeDay.every(2)));
 
             d3
                 .select(this.$refs.axisY)
                 .attr('transform', `translate(${this.left}, 0)`)
                 .transition()
-                .duration(500)
+                .duration(this.duration)
                 .call(d3.axisLeft(this.scaleY));
         },
-        updatePath() {
-            this.calculateAxis();
-
-            let paths = d3
+        updateLines() {
+            this.screen.length > 0 && d3
                 .select(this.$refs.paths)
-                .selectAll('.path');
+                .selectAll('path')
+                .each((d, i, t) => {
+                    d3.select(t[i])
+                        .transition()
+                        .duration(this.duration)
+                        .attr('opacity', this.exclude[i] ? 0 : 1)
+                        .attr('d', this.lineTo);
+                });
 
-            paths.each((d, i, t) => {
-                d3
-                    .select(t[i])
-                    .transition()
-                    .duration(1200)
-                    .attr('d', this.line);
-            });
-
+            this.axis();
             this.$emit('update:refresh', false);
         }
+    },
+    created() {
+        this.exclude = new Array(this.data.length).fill(false);
     },
     mounted() {
         this.createSvg();
     },
     watch: {
-        data() {
-            this.$nextTick(this.updatePath);
+        exclude() {
+            this.$nextTick(this.updateLines);
         },
         refresh(state) {
-            state && this.$nextTick(this.updatePath);
+            state && this.$nextTick(this.updateLines);
         }
     }
 };
@@ -213,5 +270,13 @@ export default {
 
 .line {
     height: 100%;
+}
+
+.legend {
+    font-size: 14px;
+}
+
+.legend g {
+    cursor: pointer;
 }
 </style>
