@@ -1,23 +1,21 @@
 <template>
 <div class="main-wrap">
-    <linear :data="initsigndata.data" :options="lineOption" :width="1200"
-             :height="300" domainType="time" :refresh.sync="refresh"></linear>
-    <button @click="update">更新</button>
-    <button @click="change">替换</button>
+    <linear :data="initsigndata" :width="1200" :height="300" :refresh.sync="refresh"></linear>
+    <button @click="upDate">更新</button>
+    <button @click="inData">替换</button>
 </div>
 </template>
 
 <script>
-import Linear from '@/components/linear';
+import * as d3 from 'd3';
+import Linear from '@/components/charts/linear';
 
 export default {
     data() {
         return {
             refresh: false,
             changed: false,
-            lineOption: {
-                domainType: 'time'
-            },
+            data: [],
             data1: [
                 {
                     title: '资源量',
@@ -2500,31 +2498,67 @@ export default {
                     }, { value: 0, label: "2018/05/17" }]
                 }],
             initsigndata: {
-                data: [],
+                legend: {
+                    x: 10,
+                    y: 10,
+                    data: []
+                },
+                xAxis: {
+                    type: 'time',
+                    format: '%Y-%m-%d'
+                },
+                yAxis: {
+                    type: 'value'
+                },
+                series: []
             }
         };
     },
     components: { Linear },
+    computed: {
+        datum() {
+            return d3.merge(this.data.map(item => item.list));
+        }
+    },
     methods: {
-        update() {
+        format(params) {
+            let data = params || this.data;
+            let legend = Object.assign({data: []}, this.initsigndata.legend);
+            let series = data.map((item, index) => {
+                let list = item.list.map((v) => {
+                    let label = new Date(v.label);
+                    let value = v.value;
+                    return {label, value};
+                });
+                legend.data[index] = item.title;
+                return {
+                    name: item.title, data: list
+                };
+            });
+            return Object.assign({}, this.initsigndata, {legend, series});
+        },
+
+        upDate() {
             let ary = [57, 81, 99, 112, 36, 36, 26, 91];
-            this.initsigndata.data = this.initsigndata.data.map((item) => {
+            this.data = this.data.map((item) => {
                 let index = Math.random() * ary.length - 1 | 0;
                 item.list.forEach((list) => {
                     list.value = (Math.random() * ary[index]) | 0;
                 });
                 return item;
             });
+            this.initsigndata = this.format();
             this.refresh = true;
         },
-        change() {
-            this.initsigndata.data = this.changed ? this.data2 : this.data1;
+        inData() {
+            this.data = this.changed ? this.data2 : this.data1;
+            this.initsigndata = this.format();
             this.changed = !this.changed;
             this.refresh = true;
         }
     },
     mounted() {
-        this.change();
+        this.inData();
     }
 };
 </script>

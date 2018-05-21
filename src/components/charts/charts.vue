@@ -1,24 +1,29 @@
 <template>
 <div class="main-wrap">
-    <linear :data="initsigndata.data" :options="lineOption" :width="1200"
-             :height="300" domainType="time" :refresh.sync="refresh"></linear>
-    <button @click="update">更新</button>
-    <button @click="change">替换</button>
+    <linear :data="initsigndata" :width="1200" :height="300" :refresh.sync="refresh"></linear>
+    <linear :data="initsigndata" :width="1200" :height="300" :refresh.sync="refresh"></linear>
+    <button @click="upLineDate">更新折线图</button>
+    <button @click="inLineData">替换折线图</button>
+    <pie :data="initpiedata" :width="1200" :height="300" :refresh.sync="refresh"></pie>
+    <pie :data="initpiedata" :width="1200" :height="300" :refresh.sync="refresh"></pie>
+    <button @click="upPieData">更新饼图</button>
+    <button @click="inPieData">替换饼图</button>
 </div>
 </template>
 
 <script>
-import Linear from '@/components/linear';
+import * as d3 from 'd3';
+import Linear from '@/components/charts/linear';
+import Pie from '@/components/charts/pie';
 
 export default {
     data() {
         return {
             refresh: false,
-            changed: false,
-            lineOption: {
-                domainType: 'time'
-            },
-            data1: [
+            lineChanged: false,
+            pieChanged: false,
+            lineData: [],
+            lineData1: [
                 {
                     title: '资源量',
                     list: [{
@@ -1678,7 +1683,7 @@ export default {
                         label: '2018/05/16'
                     }, { value: 0, label: '2018/05/17' }]
                 }],
-            data2: [
+            lineData2: [
                 {
                     title: "资源量",
                     list: [{ value: 0, label: "2017/11/18" }, {
@@ -2499,32 +2504,117 @@ export default {
                         label: "2018/05/16"
                     }, { value: 0, label: "2018/05/17" }]
                 }],
+            pieData: [],
+            pieData1: [
+                ['小米', 60.8],
+                ['三星', 58.4],
+                ['联想', 47.3],
+                ['苹果', 46.6],
+                ['华为', 41.3],
+                ['酷派', 40.1],
+                ['其他', 111.5]
+            ],
+            pieData2: [
+                ['小米', 60.8],
+                ['三星', 58.4],
+                ['联想', 47.3],
+                ['苹果', 46.6],
+                ['华为', 41.3],
+                ['酷派', 40.1],
+                ['其他', 111.5]
+            ],
             initsigndata: {
-                data: [],
+                legend: {
+                    data: []
+                },
+                xAxis: {
+                    type: 'time',
+                    format: '%Y-%m-%d'
+                },
+                yAxis: {
+                    type: 'value'
+                },
+                series: []
+            },
+            initpiedata: {
+                legend: {
+                    data: []
+                },
+                series: []
             }
         };
     },
-    components: { Linear },
+    components: { Linear, Pie },
+    computed: {
+        datum() {
+            return d3.merge(this.data.map(item => item.list));
+        }
+    },
     methods: {
-        update() {
+        formatLinear() {
+            let data = this.lineData;
+            let legend = Object.assign({}, this.initsigndata.legend);
+            let series = data.map((item, index) => {
+                let list = item.list.map((v) => {
+                    let label = new Date(v.label);
+                    let value = v.value;
+                    return {label, value};
+                });
+                legend.data[index] = item.title;
+                return {
+                    name: item.title, data: list
+                };
+            });
+            return Object.assign({}, this.initsigndata, {legend, series});
+        },
+        formatPie() {
+            let data = this.pieData;
+            let legend = Object.assign({}, this.initpiedata.legend);
+            let series = [];
+            series.push({
+                name: '2014',
+                // --------------------------
+                radius: [120, 40],
+                data: data.map((item, index) => {
+                    let label = item[0];
+                    let value = item[1];
+                    legend.data[index] = item[0];
+                    return {label, value};
+                })
+            });
+            return Object.assign({}, this.initpiedata, {legend, series});
+        },
+        upLineDate() {
             let ary = [57, 81, 99, 112, 36, 36, 26, 91];
-            this.initsigndata.data = this.initsigndata.data.map((item) => {
+            this.lineData = this.lineData.map((item) => {
                 let index = Math.random() * ary.length - 1 | 0;
                 item.list.forEach((list) => {
                     list.value = (Math.random() * ary[index]) | 0;
                 });
                 return item;
             });
+            this.initsigndata = this.formatLinear();
             this.refresh = true;
         },
-        change() {
-            this.initsigndata.data = this.changed ? this.data2 : this.data1;
-            this.changed = !this.changed;
+        inLineData() {
+            this.lineData = this.lineChanged ? this.lineData2 : this.lineData1;
+            this.initsigndata = this.formatLinear();
+            this.lineChanged = !this.lineChanged;
+            this.refresh = true;
+        },
+        upPieData() {
+
+        },
+        inPieData() {
+            this.pieData = this.pieChanged ? this.pieData2 : this.pieData1;
+            this.initpiedata = this.formatPie();
+            this.pieChanged = !this.pieChanged;
             this.refresh = true;
         }
     },
     mounted() {
-        this.change();
+        this.inLineData();
+        this.inPieData();
     }
 };
 </script>
