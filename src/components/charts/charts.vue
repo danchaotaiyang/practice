@@ -1,13 +1,15 @@
 <template>
 <div class="main-wrap">
-    <linear :data="initsigndata" :width="1200" :height="300" :refresh.sync="refresh"></linear>
+    <bar :data="initbardata" :width="1200" :height="300" :refresh.sync="refresh"></bar>
+    <bar :data="initbardata" :width="1200" :height="300" :refresh.sync="refresh"></bar>
     <linear :data="initsigndata" :width="1200" :height="300" :refresh.sync="refresh"></linear>
     <button @click="upLineDate">更新折线图</button>
     <button @click="inLineData">替换折线图</button>
-    <pie :data="initpiedata" :width="1200" :height="300" :refresh.sync="refresh"></pie>
+<!--
     <pie :data="initpiedata" :width="1200" :height="300" :refresh.sync="refresh"></pie>
     <button @click="upPieData">更新饼图</button>
     <button @click="inPieData">替换饼图</button>
+-->
 </div>
 </template>
 
@@ -15,6 +17,7 @@
 import * as d3 from 'd3';
 import Linear from '@/components/charts/linear';
 import Pie from '@/components/charts/pie';
+import Bar from '@/components/charts/bar';
 
 export default {
     data() {
@@ -2512,6 +2515,30 @@ export default {
                 ['苹果', 46.6],
                 ['华为', 41.3],
                 ['酷派', 40.1],
+                ['小米', 60.8],
+                ['三星', 58.4],
+                ['联想', 47.3],
+                ['苹果', 46.6],
+                ['华为', 41.3],
+                ['酷派', 40.1],
+                ['小米', 60.8],
+                ['三星', 58.4],
+                ['联想', 47.3],
+                ['苹果', 46.6],
+                ['华为', 41.3],
+                ['酷派', 40.1],
+                ['小米', 60.8],
+                ['三星', 58.4],
+                ['联想', 47.3],
+                ['苹果', 46.6],
+                ['华为', 41.3],
+                ['酷派', 40.1],
+                ['小米', 60.8],
+                ['三星', 58.4],
+                ['联想', 47.3],
+                ['苹果', 46.6],
+                ['华为', 41.3],
+                ['酷派', 40.1],
                 ['其他', 111.5]
             ],
             pieData2: [
@@ -2522,6 +2549,27 @@ export default {
                 ['华为', 41.3],
                 ['酷派', 40.1],
                 ['其他', 111.5]
+            ],
+            barData: [
+                ['小米', 60.8],
+                ['三星', 58.4],
+                ['联想', 47.3],
+                ['苹果', 46.6],
+                ['华为', 41.3],
+                ['酷派', 40.1],
+                ['小米1', 60.8],
+                ['三星1', 58.4],
+                ['联想1', 47.3],
+                ['苹果1', 46.6],
+                ['华为1', 41.3],
+                ['酷派1', 40.1],
+                ['小米2', 60.8],
+                ['三星2', 58.4],
+                ['联想2', 47.3],
+                ['苹果2', 46.6],
+                ['华为2', 41.3],
+                ['酷派2', 40.1],
+                ['其他', 111]
             ],
             initsigndata: {
                 legend: {
@@ -2541,10 +2589,22 @@ export default {
                     data: []
                 },
                 series: []
+            },
+            initbardata: {
+                legend: {
+                    data: []
+                },
+                xAxis: {
+                    type: 'string'
+                },
+                yAxis: {
+                    type: 'value'
+                },
+                series: []
             }
         };
     },
-    components: { Linear, Pie },
+    components: { Linear, Pie, Bar },
     computed: {
         datum() {
             return d3.merge(this.data.map(item => item.list));
@@ -2584,6 +2644,17 @@ export default {
             });
             return Object.assign({}, this.initpiedata, {legend, series});
         },
+        formatBar() {
+            let data = this.barData;
+            let legend = Object.assign({}, this.initbardata.legend);
+            let series = data.map((item, index) => {
+                legend.data[index] = item[0];
+                return {
+                    name: item[0], data: item[1]
+                };
+            });
+            return Object.assign({}, this.initbardata, {legend, series});
+        },
         upLineDate() {
             let ary = [57, 81, 99, 112, 36, 36, 26, 91];
             this.lineData = this.lineData.map((item) => {
@@ -2610,11 +2681,16 @@ export default {
             this.initpiedata = this.formatPie();
             this.pieChanged = !this.pieChanged;
             this.refresh = true;
+        },
+        inBarData() {
+            this.initbardata = this.formatBar();
+            this.refresh = true;
         }
     },
     mounted() {
         this.inLineData();
         this.inPieData();
+        this.inBarData();
     }
 };
 </script>

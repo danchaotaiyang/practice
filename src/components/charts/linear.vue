@@ -5,20 +5,20 @@
             <g class="paths" ref="paths"></g>
             <g class="xAxis" ref="xAxis"></g>
             <g class="yAxis" ref="yAxis"></g>
-            <g class="focus" ref="focus" opacity="0">
-                <rect class="rect" ref="rect" :x="left" :y="top" :width="innerWidth" :height="innerHeight" @mouseover="opacityFocus(1)" @mouseout="opacityFocus(0)"></rect>
-                <line :x1="focus.xFocus" :y1="top" :x2="focus.xFocus" :y2="bottom"></line>
-                <g v-for="(item, index) in series" v-show="!exclude[index]">
-                    <line :x1="left" :y1="focus.yFocus[index]" :x2="focus.xFocus" :y2="focus.yFocus[index]"></line>
-                    <circle :cx="focus.xFocus" :cy="focus.yFocus[index]" :fill="colors[index]" r="4" stroke-width="1"></circle>
-                </g>
-            </g>
         </g>
         <g class="legend" ref="legend" :transform="`translate(${legend.x}, ${legend.y})`">
             <g v-for="(d, i) in legend.data" :transform="`translate(${i * legendWidth % innerWidth}, ${((i * legendWidth / innerWidth) | 0) * 22})`" @click="updateView(i)">
-                <line x1="0" y1="6" x2="20" y2="6" :stroke="colors[i]" stroke-width="1.5"></line>
-                <circle cx="10" cy="6" r="4" :stroke="colors[i]" stroke-width="1.5"></circle>
+                <line x1="0" y1="6" x2="20" y2="6" :stroke="series[i].color" stroke-width="1.5"></line>
+                <circle cx="10" cy="6" r="4" :stroke="series[i].color" stroke-width="1.5"></circle>
                 <text class="legendText" x="25" y="11" fill="#000">{{d}}</text>
+            </g>
+        </g>
+        <g class="focus" ref="focus" opacity="0">
+            <rect class="rect" ref="rect" :x="left" :y="top" :width="innerWidth" :height="innerHeight" @mouseover="opacityFocus(1)" @mouseout="opacityFocus(0)" @mousemove="inventFocus"></rect>
+            <line :x1="focus.xFocus" :y1="top" :x2="focus.xFocus" :y2="bottom"></line>
+            <g v-for="(d, i) in series" v-show="!exclude[i]">
+                <line :x1="left" :y1="focus.yFocus[i]" :x2="focus.xFocus" :y2="focus.yFocus[i]"></line>
+                <circle :cx="focus.xFocus" :cy="focus.yFocus[i]" :fill="series[i].color" r="4" stroke-width="1"></circle>
             </g>
         </g>
         <defs>
@@ -41,6 +41,7 @@ export default {
     data() {
         return {
             defaultLegend: {
+                type: 'linear',
                 x: 10,
                 y: 10,
                 data: []
@@ -84,7 +85,10 @@ export default {
             return Object.assign({}, this.defaultLegend, this.data.legend);
         },
         series() {
-            return this.data.series;
+            return this.data.series.map((d, i) => {
+                d.color = this.colors[i];
+                return d;
+            });
         },
         screen() {
             let data = [];
@@ -208,7 +212,7 @@ export default {
                 .append('path')
                 .datum(d => d.data)
                 .attr('fill', 'none')
-                .attr('stroke', (d, i) => this.colors[i])
+                .attr('stroke', (d, i) => this.series[i].color)
                 .attr('stroke-width', 1.5)
                 .attr('stroke-linejoin', 'round')
                 .attr('stroke-linecap', 'round')
@@ -253,7 +257,8 @@ export default {
                 .duration(this.duration / 2)
                 .style('opacity', opacity || 0);
         },
-        inventFocus() {
+        inventFocus(e) {
+/*
             let that = this;
             this.elements.rect
                 .on('mousemove', function () {
@@ -281,7 +286,8 @@ export default {
                         let y1 = d.data[index].value;
                         that.tooltip.desc[i] = {
                             name: that.exclude[i] ? '--' : d.name,
-                            value: that.exclude[i] ? '--' : d.data[index].value
+                            value: that.exclude[i] ? '--' : d.data[index].value,
+                            color: d.color
                         };
                         return yScale(y1);
                     });
@@ -290,12 +296,47 @@ export default {
                     that.tooltip.tipY = d3.event.layerY;
                     that.tooltip.title = that.dateFormat(new Date(x0).getTime() + 86400000);
                 });
+*/
+            if (this.screen.length === 0) return;
+
+            let xScale = this.xScale,
+                yScale = this.yScale;
+
+            let mouseX = e.layerX - 2,
+                x0 = xScale.invert(mouseX);
+
+            let data = this.screen[0].data,
+                bisect = d3.bisector(d => d.label).left;
+
+            let index = x0 && bisect(data, x0);
+
+            if (index >= data.length) {
+                return;
+            }
+
+            let x1 = data[index].label;
+            this.focus.xFocus = xScale(x1);
+
+            this.focus.yFocus = this.series.map((d, i) => {
+                let y1 = d.data[index].value;
+                this.tooltip.desc[i] = {
+                    name: this.exclude[i] ? '--' : d.name,
+                    value: this.exclude[i] ? '--' : d.data[index].value,
+                    color: d.color
+                };
+                return yScale(y1);
+            });
+
+            this.tooltip.tipX = e.layerX + 20;
+            this.tooltip.tipY = e.layerY;
+            this.tooltip.title = this.dateFormat(new Date(x0).getTime() + 86400000);
+
         },
         initializeLinear() {
 
             if (this.screen.length === 0) return;
 
-            this.inventFocus();
+            // this.inventFocus();
             this.inventLinear();
             this.calculateAxis();
         },
@@ -304,11 +345,6 @@ export default {
             this.exclude = this.exclude.map((item, i) => {
                 return index === i ? !item : item;
             });
-            paths
-                .transition()
-                .duration(this.duration)
-                .attr('opacity', this.screen.length === 0 ? 0 : 1);
-
             legend
                 .selectAll('g')
                 .each((d, i, t) => {
@@ -319,12 +355,12 @@ export default {
                     lg
                         .select('line')
                         .attr('stroke', () => {
-                            return this.exclude[i] ? '#ddd' : this.colors[i];
+                            return this.exclude[i] ? '#ddd' : this.series[i].color;
                         });
                     lg
                         .select('circle')
                         .attr('stroke', () => {
-                            return this.exclude[i] ? '#ddd' : this.colors[i];
+                            return this.exclude[i] ? '#ddd' : this.series[i].color;
                         });
                     lg
                         .select('text')
@@ -332,6 +368,11 @@ export default {
                             return this.exclude[i] ? '#ddd' : '#000';
                         });
                 });
+
+            paths
+                .transition()
+                .duration(this.duration)
+                .attr('opacity', this.screen.length === 0 ? 0 : 1);
 
             if (this.screen.length > 0) {
                 paths
@@ -370,7 +411,7 @@ export default {
 };
 </script>
 
-<style>
+<style scoped>
 .linear svg {
     -webkit-user-select: none;
     -moz-user-select: none;

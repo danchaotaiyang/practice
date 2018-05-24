@@ -3,7 +3,7 @@
     <div class="title" ref="title">{{data.title}}</div>
     <ul class="desc" ref="desc">
         <li v-for="(item, index) in data.desc" v-show="!exclude[index]">
-            <em :style="{'background': colors[index]}"></em><span>{{item.name}}</span><strong>{{item.value}}</strong>
+            <em :style="{'background': item.color}"></em><span>{{item.name}}</span><strong>{{item.value}}</strong>
         </li>
     </ul>
 </div>

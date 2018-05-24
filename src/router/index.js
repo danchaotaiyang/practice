@@ -24,7 +24,7 @@ export default new Router({
         },
         {
             path: '/lines',
-            component: (resolve) => require(['@/components/lines'], resolve)
+            component: (resolve) => require(['@/components/charts/lines'], resolve)
         },
         {
             path: '/charts',
