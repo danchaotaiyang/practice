@@ -218,6 +218,22 @@ export default {
             exit
                 .remove();
 
+
+            let drag = d3.drag();
+            this.elements.focus
+                .call(drag
+                    .on('drag', () => {
+                        let {paths, xAxis} = this.elements;
+                        let scrollX = this.scrollX + d3.event.dx;
+                        this.scrollX = Math.max(-(this.dataWidth - this.innerWidth - this.left), Math.min(0, scrollX));
+                        paths
+                            .selectAll('rect')
+                            .attr('transform', `translate(${this.scrollX}, 0)`);
+                        xAxis
+                            .attr('transform', `translate(${this.scrollX}, ${this.bottom})`);
+                    })
+                );
+
             this.calculateAxis();
         },
         calculateAxis() {
@@ -267,24 +283,8 @@ export default {
         },
         initializeBar() {
             if (this.screen.length === 0) return;
-            // this.inventFocus();
             let wrap = d3.select(this.$refs.bar);
-            Object.keys(this.$refs).forEach(d => this.elements[d] = wrap.select(`.${d}`));
-            let drag = d3.drag();
-            this.elements.focus
-                .call(drag
-                    .on('drag', () => {
-                        let {paths, xAxis} = this.elements;
-                        let scrollX = this.scrollX + d3.event.dx;
-                        this.scrollX = Math.max(-(this.dataWidth - this.innerWidth - this.left), Math.min(0, scrollX));
-                        paths
-                            .selectAll('rect')
-                            .attr('transform', `translate(${this.scrollX}, 0)`);
-                        xAxis
-                            .attr('transform', `translate(${this.scrollX}, ${this.bottom})`);
-                    })
-                );
-            this.inventBar();
+            Object.keys(this.$refs).forEach(d => this.elements[d] = wrap.select(`.${d}`));      this.inventBar();
         },
         updateView(index) {
             let {paths, legend} = this.elements;
