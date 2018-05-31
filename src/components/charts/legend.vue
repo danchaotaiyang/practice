@@ -1,12 +1,15 @@
 <template>
-<div class="tooltipWrap" ref="tooltipWrap" :style="{left: `${data.tipX}px`, top: `${data.tipY}px`}">
-    <div class="title" ref="title">{{data.title}}</div>
-    <ul class="desc" ref="desc">
-        <li v-for="(item, index) in data.desc" v-show="!exclude[index]">
-            <em :style="{'background': item.color}"></em><span>{{item.name}}</span><strong>{{item.value}}</strong>
-        </li>
-    </ul>
-</div>
+<g class="legend" ref="legend" :transform="`translate(${data.x}, ${data.y})`">
+    <g v-if="data.type === 'linear'" v-for="(d, i) in data.data" :transform="`translate(${i * legendWidth % innerWidth}, ${((i * legendWidth / innerWidth) | 0) * 22})`" @click="updateView(i)">
+        <line x1="0" y1="6" x2="20" y2="6" :stroke="series[i].color" stroke-width="1.5"></line>
+        <circle cx="10" cy="6" r="4" :stroke="series[i].color" stroke-width="1.5"></circle>
+        <text class="legendText" x="25" y="11" fill="#000">{{d}}</text>
+    </g>
+    <g v-if="data.type === 'bar'" v-for="(d, i) in data.data" :transform="`translate(${i * legendTickWidth % legendClientWidth}, ${((i * legendTickWidth / legendClientWidth) | 0) * 22})`" @click="updateView(i)">
+        <rect rx="2" ry="2" :fill="series[i].color"></rect>
+        <text class="legendText" x="18" y="11" fill="#000">{{d}}</text>
+    </g>
+</g>
 </template>
 
 <script>
@@ -24,75 +27,69 @@ export default {
         exclude: {
             type: Array, default: () => ([])
         }
+    },
+    methods: {
+        opacityFocus(opacity) {
+            let {focus, tooltip} = this.elements;
+            focus
+                .transition()
+                .duration(this.duration / 2)
+                .attr('opacity', opacity || 0);
+            tooltip
+                .transition()
+                .duration(this.duration / 2)
+                .style('opacity', opacity || 0);
+        },
+        inventFocus(e) {
+            if (this.screen.length === 0) return;
+
+            let scaleX = this.xScale;
+
+            let mouseX = e.layerX - this.left,
+                index = ((mouseX - this.scrollX) / scaleX.bandwidth()) | 0;
+            let data = this.screen[index];
+            this.tooltip = {
+                title: data.name,
+                desc: [{
+                    name: '',
+                    value: data.data,
+                    color: data.color
+                }]
+            };
+
+            this.tooltip.tipX = e.layerX + 20;
+            this.tooltip.tipY = e.layerY;
+        },
     }
 };
 </script>
 
-<style>
-.tooltipWrap {
-    position: absolute;
-    top: 100px;
-    left: 100px;
-    z-index: 500;
-    background-color: #f9f9f9;
-    border: 1px solid #aaa;
-    opacity: 0;
-    white-space: nowrap;
-    -webkit-border-radius: 4px;
-    border-radius: 4px;
-    -webkit-user-select: none;
-    -moz-user-select: none;
-    -ms-user-select: none;
-    user-select: none;
-    pointer-events: none;
-}
-
-.tooltipWrap .title {
-    padding: 4px 8px;
-    border-bottom: 1px solid #aaa;
-    font-weight: bold;
-    font-size: 14px;
-}
-
-.tooltipWrap .desc {
-    margin: 0;
-    padding: 4px;
-    list-style: none;
-    justify-content: space-between;
-}
-
-.tooltipWrap .desc li {
-    display: -webkit-flex;
-    display: flex;
-    -webkit-align-items: center;
-    align-items: center;
-    -webkit-justify-content: space-between;
-    justify-content: space-between;
-    padding: 2px;
+<style scoped>
+.legend g {
+    cursor: pointer;
     font-size: 12px;
 }
 
-.tooltipWrap .desc li em {
-    display: inline-block;
+.legend g circle {
+    fill: #fff;
+}
+
+.legend g rect {
+    width: 13px;
+    height: 13px;
+}
+.legend g {
+    cursor: pointer;
+    font-size: 12px;
+}
+
+.legend g circle {
+    fill: #fff;
+}
+
+.legend g rect {
     width: 12px;
     height: 12px;
-    margin-right: 4px;
-    -webkit-border-radius: 2px;
-    -moz-border-radius: 2px;
-    border-radius: 2px;
 }
 
-.tooltipWrap .desc li span {
-    display: inline-block;
-    font-size: 12px;
-}
-
-.tooltipWrap .desc li strong {
-    -webkit-flex: 1;
-    flex: 1;
-    min-width: 2em;
-    margin-left: 18px;
-    font-size: 14px;
-    text-align: right;
-}
 </style>

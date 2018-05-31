@@ -1,54 +1,61 @@
 <template>
-<div class="linearWrap" ref="linearWrap">
+<div class="linear" ref="linear">
     <svg ref="svg" :width="width" :height="height">
         <g class="view" ref="view">
             <g class="paths" ref="paths"></g>
-            <g class="axisX" ref="axisX"></g>
-            <g class="axisY" ref="axisY"></g>
-            <g class="focus" ref="focus" opacity="0">
-                <rect :x="left" :y="top" :width="innerWidth" :height="innerHeight"></rect>
-                <line :x1="focus.focusX" :y1="top" :x2="focus.focusX" :y2="bottom"></line>
-                <g v-for="(item, index) in series" :opacity="exclude[index] ? 0 : 1">
-                    <line :x1="left" :y1="focus.focusY[index]" :x2="focus.focusX" :y2="focus.focusY[index]"></line>
-                    <circle :cx="focus.focusX" :cy="focus.focusY[index]" :fill="colors[index]" r="4" stroke-width="1.5"></circle>
-                </g>
-            </g>
+            <g class="xAxis" ref="xAxis"></g>
+            <g class="yAxis" ref="yAxis"></g>
         </g>
         <g class="legend" ref="legend" :transform="`translate(${legend.x}, ${legend.y})`">
-            <g v-for="(d, i) in legend.data" :transform="`translate(${i * legendWidth % clientWidth}, ${((i * legendWidth / width) | 0) * 22})`" @click="updateView(i)">
-                <line x1="0" y1="6" x2="16" y2="6" :stroke="colors[i]" stroke-width="1.5"></line>
-                <circle cx="8" cy="6" r="4" :stroke="colors[i]" stroke-width="1.5"></circle>
-                <text class="legendText" x="20" y="11">{{d}}</text>
+            <g v-for="(d, i) in legend.data" :transform="`translate(${i * legendWidth % innerWidth}, ${((i * legendWidth / innerWidth) | 0) * 22})`" @click="updateView(i)">
+                <line x1="0" y1="6" x2="20" y2="6" :stroke="series[i].color" stroke-width="1.5"></line>
+                <circle cx="10" cy="6" r="4" :stroke="series[i].color" stroke-width="1.5"></circle>
+                <text class="legendText" x="25" y="11" fill="#000">{{d}}</text>
+            </g>
+        </g>
+        <g class="focus" ref="focus" opacity="0">
+            <rect class="rect" ref="rect" :x="left" :y="top" :width="innerWidth" :height="innerHeight" @mouseover="opacityFocus(1)" @mouseout="opacityFocus(0)" @mousemove="inventFocus"></rect>
+            <line :x1="focus.xFocus" :y1="top" :x2="focus.xFocus" :y2="bottom"></line>
+            <g v-for="(d, i) in series" v-show="!exclude[i]">
+                <line :x1="left" :y1="focus.yFocus[i]" :x2="focus.xFocus" :y2="focus.yFocus[i]"></line>
+                <circle :cx="focus.xFocus" :cy="focus.yFocus[i]" :fill="series[i].color" r="4" stroke-width="1"></circle>
             </g>
         </g>
         <defs>
             <clipPath id="clipPath">
-                <rect :width="innerWidth + 2" :height="innerHeight" :x="left" :y="top"></rect>
+                <rect :width="innerWidth + 2" :height="innerHeight + 2" :x="left" :y="top - 2"></rect>
             </clipPath>
         </defs>
     </svg>
-    <tool-tip ref="tooltip" :data="tooltip" :exclude="exclude" :colors="colors"></tool-tip>
+    <tool-tip class="tooltip" ref="tooltip" :data="tooltip" :exclude="exclude" :colors="colors"></tool-tip>
 </div>
 </template>
 
 <script>
-import ToolTip from '@/components/tooltip';
+import ToolTip from '@/components/charts/tooltip';
+import {colors} from '@/components/charts/colors';
 import * as d3 from 'd3';
-import {colors} from '@/components/colors';
 
 export default {
     components: {ToolTip},
     data() {
         return {
-            default: {
-                margin: {top: 40, right: 30, bottom: 30, left: 30},
-                duration: 400,
+            defaultLegend: {
+                type: 'linear',
+                x: 10,
+                y: 10,
+                data: []
+            },
+            defaultConfig: {
+                padding: {top: 40, right: 30, bottom: 30, left: 30},
+                duration: 200,
                 curve: 'curveLinear'
             },
+            elements: {},
             exclude: [],
             focus: {
-                focusX: 0,
-                focusY: [],
+                xFocus: 0,
+                yFocus: [],
             },
             tooltip: {
                 title: '',
@@ -74,22 +81,36 @@ export default {
         }
     },
     computed: {
+        legend() {
+            return Object.assign({}, this.defaultLegend, this.data.legend);
+        },
+        series() {
+            return this.data.series.map((d, i) => {
+                d.color = this.colors[i];
+                return d;
+            });
+        },
+        screen() {
+            let data = [];
+            this.series.forEach((d, i) => !this.exclude[i] && data.push(d));
+            return data;
+        },
         config() {
             let config = {};
-            let {margin, curve, duration, colors} = this.data;
-            if (margin) {
-                config.margin = margin;
+            let {padding, curve, colors, duration} = this.data;
+            if (padding) {
+                config.padding = padding;
             }
             if (curve) {
                 config.curve = curve;
             }
-            if (duration) {
-                config.duration = duration;
-            }
             if (colors) {
                 config.colors = colors;
             }
-            return Object.assign({}, this.default, config);
+            if (duration) {
+                config.duration = duration;
+            }
+            return Object.assign({}, this.defaultConfig, config);
         },
         duration() {
             return this.config.duration;
@@ -99,50 +120,39 @@ export default {
             return [...color, ...colors];
         },
         clientWidth() {
-            return this.width || this.$refs.linearWrap.clientWidth;
+            return this.width || this.$refs.linear.clientWidth;
         },
         clientHeight() {
-            return this.height || this.$refs.linearWrap.clientHeight;
+            return this.height || this.$refs.linear.clientHeight;
         },
         innerWidth() {
-            return this.right - this.left + 1;
+            return this.right - this.left;
         },
         innerHeight() {
-            return this.bottom - this.top + 2;
+            return this.bottom - this.top;
         },
         top() {
-            return this.config.margin.top;
+            return this.config.padding.top;
         },
         right() {
-            return this.clientWidth - this.config.margin.right;
+            return this.clientWidth - this.config.padding.right;
         },
         bottom() {
-            return this.clientHeight - this.config.margin.bottom;
+            return this.clientHeight - this.config.padding.bottom;
         },
         left() {
-            return this.config.margin.left;
+            return this.config.padding.left;
         },
-        legend() {
-            return this.data.legend;
-        },
-        series() {
-            return this.data.series;
-        },
-        screen() {
-            let data = [];
-            this.series.forEach((d, i) => !this.exclude[i] && data.push(d));
-            return data;
-        },
-        datum() {
+        merge() {
             return d3.merge(this.screen.map(item => item.data));
         },
-        domainX() {
-            return d3.extent(this.datum, d => d.label);
+        xDomain() {
+            return d3.extent(this.merge, d => d.label);
         },
-        domainY() {
-            return d3.extent(this.datum, d => d.value);
+        yDomain() {
+            return d3.extent(this.merge, d => d.value);
         },
-        scaleX() {
+        xScale() {
             let scale;
             switch (this.data.xAxis.type) {
                 case 'time':
@@ -151,9 +161,9 @@ export default {
                 default:
                     scale = d3.scaleLinear();
             }
-            return scale.range([this.left, this.right]).domain(this.domainX);
+            return scale.range([this.left, this.right]).domain(this.xDomain);
         },
-        scaleY() {
+        yScale() {
             let scale;
             switch (this.data.yAxis.type) {
                 case 'time':
@@ -162,34 +172,36 @@ export default {
                 default:
                     scale = d3.scaleLinear();
             }
-            return scale.range([this.bottom, this.top]).domain(this.domainY);
+            return scale.range([this.bottom, this.top]).domain(this.yDomain);
         },
         lineFrom() {
             return d3.line()
-                .x(d => this.scaleX(d.label))
+                .x(d => this.xScale(d.label))
                 .y(this.bottom);
         },
         lineTo() {
             return d3.line()
-                .x(d => this.scaleX(d.label))
-                .y(d => this.scaleY(d.value))
+                .x(d => this.xScale(d.label))
+                .y(d => this.yScale(d.value))
                 .curve(d3[this.config.curve]);
         },
         legendWidth() {
             let lwp = this.config.legendWidth;
-            let max = d3.max(this.data.legend.data, d => d.length);
-            return lwp ? (this.clientWidth * lwp) / 100 : max * 20;
+            let max = d3.max(this.legend.data, d => d.length);
+            return lwp ? (this.innerWidth * lwp) / 100 : max * 12 + 40;
+        },
+        dateFormat() {
+            return d3.timeFormat(this.data.xAxis.format);
         }
     },
     methods: {
-        inventLines() {
-            d3
-                .select(this.$refs.paths)
+        inventLinear() {
+            let {paths} = this.elements;
+            paths
                 .selectAll('path')
                 .remove();
 
-            let lines = d3
-                .select(this.$refs.paths)
+            let lines = paths
                 .selectAll('path')
                 .data(this.series);
 
@@ -200,7 +212,7 @@ export default {
                 .append('path')
                 .datum(d => d.data)
                 .attr('fill', 'none')
-                .attr('stroke', (d, i) => this.colors[i])
+                .attr('stroke', (d, i) => this.series[i].color)
                 .attr('stroke-width', 1.5)
                 .attr('stroke-linejoin', 'round')
                 .attr('stroke-linecap', 'round')
@@ -221,126 +233,149 @@ export default {
             this.calculateAxis();
         },
         calculateAxis() {
-            d3
-                .select(this.$refs.axisX)
+            let {xAxis, yAxis} = this.elements;
+            xAxis
                 .attr('transform', `translate(0, ${this.bottom})`)
                 .transition()
                 .duration(this.duration)
-                .call(d3.axisBottom(this.scaleX));
+                .call(d3.axisBottom(this.xScale).tickFormat(d => this.dateFormat(d)));
 
-            d3
-                .select(this.$refs.axisY)
+            yAxis
                 .attr('transform', `translate(${this.left}, 0)`)
                 .transition()
                 .duration(this.duration)
-                .call(d3.axisLeft(this.scaleY));
+                .call(d3.axisLeft(this.yScale));
         },
-        inventFocus() {
+        opacityFocus(opacity) {
+            let {focus, tooltip} = this.elements;
+            focus
+                .transition()
+                .duration(this.duration / 2)
+                .attr('opacity', opacity || 0);
+            tooltip
+                .transition()
+                .duration(this.duration / 2)
+                .style('opacity', opacity || 0);
+        },
+        inventFocus(e) {
+/*
             let that = this;
-            let focusGroup = d3.select(this.$refs.focus);
-
-            let tips = d3.select(this.$refs.tips);
-
-            const opacity = (opacity) => {
-                focusGroup
-                    .transition()
-                    .duration(this.duration / 2)
-                    .attr('opacity', opacity || 0);
-                tips
-                    .transition()
-                    .duration(this.duration / 2)
-                    .style('opacity', opacity || 0);
-            };
-
-            let dateFormat = d3.timeFormat(this.data.xAxis.format);
-
-            focusGroup
-                .on('mouseover', () => {
-                    this.screen.length && opacity(1);
-                })
-                .on('mouseout', opacity)
+            this.elements.rect
                 .on('mousemove', function () {
-
                     if (that.screen.length === 0) return;
 
-                    let scaleX = that.scaleX,
-                        scaleY = that.scaleY;
+                    let xScale = that.xScale,
+                        yScale = that.yScale;
 
-                    let mouseX = d3.mouse(this)[0],
-                        x0 = scaleX.invert(mouseX);
+                    let mouseX = d3.mouse(this)[0] - 2 | 0,
+                        x0 = xScale.invert(mouseX);
 
                     let data = that.screen[0].data,
                         bisect = d3.bisector(d => d.label).left;
 
-                    let index = bisect(data, x0),
-                        x1 = data[index].label;
+                    let index = x0 && bisect(data, x0);
 
-                    that.focus.focusX = scaleX(x1);
+                    if (index >= data.length) {
+                        return;
+                    }
 
-                    that.focus.focusY = that.series.map((d, i) => {
+                    let x1 = data[index].label;
+                    that.focus.xFocus = xScale(x1);
+
+                    that.focus.yFocus = that.series.map((d, i) => {
                         let y1 = d.data[index].value;
                         that.tooltip.desc[i] = {
                             name: that.exclude[i] ? '--' : d.name,
-                            value: that.exclude[i] ? '--' : d.data[index].value
+                            value: that.exclude[i] ? '--' : d.data[index].value,
+                            color: d.color
                         };
-                        return scaleY(y1);
+                        return yScale(y1);
                     });
 
                     that.tooltip.tipX = d3.event.layerX + 20;
                     that.tooltip.tipY = d3.event.layerY;
-
-                    that.tooltip.title = dateFormat(new Date(x0).getTime() + 86400000);
+                    that.tooltip.title = that.dateFormat(new Date(x0).getTime() + 86400000);
                 });
-        },
-        initializeLine() {
+*/
             if (this.screen.length === 0) return;
-            this.inventFocus();
-            this.inventLines();
+
+            let xScale = this.xScale,
+                yScale = this.yScale;
+
+            let mouseX = e.layerX - 2,
+                x0 = xScale.invert(mouseX);
+
+            let data = this.screen[0].data,
+                bisect = d3.bisector(d => d.label).left;
+
+            let index = x0 && bisect(data, x0);
+
+            if (index >= data.length) {
+                return;
+            }
+
+            let x1 = data[index].label;
+            this.focus.xFocus = xScale(x1);
+
+            this.focus.yFocus = this.series.map((d, i) => {
+                let y1 = d.data[index].value;
+                this.tooltip.desc[i] = {
+                    name: this.exclude[i] ? '--' : d.name,
+                    value: this.exclude[i] ? '--' : d.data[index].value,
+                    color: d.color
+                };
+                return yScale(y1);
+            });
+
+            this.tooltip.tipX = e.layerX + 20;
+            this.tooltip.tipY = e.layerY;
+            this.tooltip.title = this.dateFormat(new Date(x0).getTime() + 86400000);
+
+        },
+        initializeLinear() {
+
+            if (this.screen.length === 0) return;
+
+            // this.inventFocus();
+            this.inventLinear();
             this.calculateAxis();
         },
         updateView(index) {
+            let {paths, legend} = this.elements;
             this.exclude = this.exclude.map((item, i) => {
                 return index === i ? !item : item;
             });
+            legend
+                .selectAll('g')
+                .each((d, i, t) => {
+                    let lg = d3
+                        .select(t[i])
+                        .transition()
+                        .duration(this.duration);
+                    lg
+                        .select('line')
+                        .attr('stroke', () => {
+                            return this.exclude[i] ? '#ddd' : this.series[i].color;
+                        });
+                    lg
+                        .select('circle')
+                        .attr('stroke', () => {
+                            return this.exclude[i] ? '#ddd' : this.series[i].color;
+                        });
+                    lg
+                        .select('text')
+                        .attr('fill', () => {
+                            return this.exclude[i] ? '#ddd' : '#000';
+                        });
+                });
 
-            d3
-                .select(this.$refs.paths)
+            paths
                 .transition()
                 .duration(this.duration)
                 .attr('opacity', this.screen.length === 0 ? 0 : 1);
 
-            d3
-                .select(this.$refs.legend)
-                .selectAll('g')
-                .each((d, i, t) => {
-                    let lg = d3
-                        .select(t[i]);
-                    lg
-                        .select('line')
-                        .transition()
-                        .duration(this.duration)
-                        .attr('stroke', () => {
-                            return this.exclude[i] ? '#ddd' : this.colors[i];
-                        });
-                    lg
-                        .select('circle')
-                        .transition()
-                        .duration(this.duration)
-                        .attr('stroke', () => {
-                            return this.exclude[i] ? '#ddd' : this.colors[i];
-                        });
-                    lg
-                        .select('text')
-                        .transition()
-                        .duration(this.duration)
-                        .attr('fill', () => {
-                            return this.exclude[i] ? '#ddd' : null;
-                        });
-                });
-
             if (this.screen.length > 0) {
-                d3
-                    .select(this.$refs.paths)
+                paths
                     .selectAll('path')
                     .each((d, i, t) => {
                         d3
@@ -350,20 +385,24 @@ export default {
                             .attr('opacity', this.exclude[i] ? 0 : 1)
                             .attr('d', this.lineTo);
                     });
-
             }
+
             this.calculateAxis();
         }
+    },
+    mounted() {
+        let wrap = d3.select(this.$refs.linear);
+        Object.keys(this.$refs).forEach(d => this.elements[d] = wrap.select(`.${d}`));
     },
     watch: {
         data() {
             this.$nextTick(() => {
                 if (!this.init) {
                     this.exclude = new Array(this.series.length).fill(false);
-                    this.initializeLine();
+                    this.initializeLinear();
                     this.init = true;
                 } else {
-                    this.inventLines();
+                    this.inventLinear();
                 }
                 this.$emit('update:refresh', false);
             });
@@ -372,56 +411,57 @@ export default {
 };
 </script>
 
-<style>
-.linearWrap svg {
+<style scoped>
+.linear svg {
     -webkit-user-select: none;
     -moz-user-select: none;
     -ms-user-select: none;
     user-select: none;
 }
 
-.linearWrap line {
+.linear line {
     shape-rendering: crispEdges;
 }
 
-.linearWrap {
+.linear {
     position: relative;
     height: 100%;
 }
 
-.linearWrap .axis path,
-.linearWrap .axis line {
+.linear .axis path,
+.linear .axis line {
     fill: none;
     stroke: black;
     shape-rendering: crispEdges;
 }
 
-.linearWrap .legend g {
+.linear .legend g {
     cursor: pointer;
     font-size: 12px;
 }
 
-.linearWrap .legend g circle {
+.linear .legend g circle {
     fill: #fff;
 }
 
-.linearWrap .legend g rect {
+.linear .legend g rect {
     width: 12px;
     height: 12px;
 }
 
-.linearWrap .focus rect {
+.linear .focus rect {
     fill: none;
     pointer-events: all;
 }
 
-.linearWrap .focus line {
+.linear .focus line {
     stroke: #666;
     stroke-dasharray: 2, 1;
-    pointer-events: all;
+    pointer-events: none;
 }
 
-.linearWrap .focus circle {
+.linear .focus circle {
     stroke: #333;
+    pointer-events: none;
 }
 </style>

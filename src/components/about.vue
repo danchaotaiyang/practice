@@ -20,6 +20,7 @@
 import ChartLine from '@/basic/chartLine';
 import Hunt from '@/components/hunt';
 import Draggable from '@/components/draggable';
+
 export default {
     components: {ChartLine, Hunt, Draggable},
     data() {

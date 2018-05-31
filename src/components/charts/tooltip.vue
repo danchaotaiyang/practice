@@ -3,16 +3,13 @@
     <div class="title" ref="title">{{data.title}}</div>
     <ul class="desc" ref="desc">
         <li v-for="(item, index) in data.desc" v-show="!exclude[index]">
-            <em :style="{'background': colors[index]}"></em><span>{{item.name}}</span><strong>{{item.value}}</strong>
+            <em :style="{'background': item.color}"></em><span>{{item.name}}</span><strong>{{item.value}}</strong>
         </li>
     </ul>
 </div>
 </template>
 
 <script>
-import * as d3 from 'd3';
-import {colors} from '@/components/colors';
-
 export default {
     data() {
         return {};
@@ -26,7 +23,8 @@ export default {
         },
         exclude: {
             type: Array, default: () => ([])
-        },  }
+        }
+    }
 };
 </script>
 
@@ -42,6 +40,10 @@ export default {
     white-space: nowrap;
     -webkit-border-radius: 4px;
     border-radius: 4px;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
     pointer-events: none;
 }
 

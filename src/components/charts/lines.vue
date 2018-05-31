@@ -8,7 +8,7 @@
 
 <script>
 import * as d3 from 'd3';
-import Linear from '@/components/linear';
+import Linear from '@/components/charts/linear';
 
 export default {
     data() {
