@@ -300,8 +300,7 @@ export default {
             },
             defaultConfig: {
                 padding: { top: 40, right: 30, bottom: 30, left: 30 },
-                duration: 200,
-                curve: 'curveLinear'
+                duration: 200
             },
             elements: {},
             exclude: [],
@@ -384,13 +383,14 @@ export default {
         path() {
             return d3.geoPath()
                 .projection(this.map);
+        },
+        max() {
+            return d3.max(d3.extent(this.series, d => d.value));
         }
     },
     methods: {
-        color(i) {
-            let series = this.series;
-            let t = series[i].value / d3.max(d3.extent(series, d => d.value));
-            return d3.rgb(d3.interpolateYlGn(t));
+        color(value) {
+            return d3.rgb(d3.interpolateYlGn(value / this.max));
         },
         initializeMap() {
             let { cities } = this.elements;
@@ -400,21 +400,27 @@ export default {
                 .data(this.mapData.features)
                 .enter()
                 .append('path')
-                .attr('stroke', '#fff')
+                .attr('stroke', this.color(this.max / 2))
                 .attr('stroke-width', 0.5)
-                .attr('fill', (d, i) => this.color(i))
+                .attr('fill', (d) => {
+                    return this.color(this.series.find(i => i.label === d.properties.id).value);
+                })
                 .attr('d', this.path)
                 .on('mouseover', (d, i, t) => {
                     d3
                         .select(t[i])
-                        .attr('fill', this.color(i).brighter(.5));
+                        .attr('fill', (d) => {
+                            return this.color(this.series.find(i => i.label === d.properties.id).value).brighter(.2);
+                        });
 
                     this.opacityFocus(1);
                 })
                 .on('mouseout', (d, i, t) => {
                     d3
                         .select(t[i])
-                        .attr('fill', this.color(i));
+                        .attr('fill', (d) => {
+                            return this.color(this.series.find(i => i.label === d.properties.id).value);
+                        });
 
                     this.opacityFocus(0);
                 })

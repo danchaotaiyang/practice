@@ -2623,7 +2623,7 @@ export default {
             this.refresh = true;
         },
         inMapData() {
-            for (let i = 1; i <= 34; i++) {
+            for (let i = 1; i <= 36; i++) {
                 this.mapsData.series.push({
                     label: i,
                     value: Math.random() * 100
