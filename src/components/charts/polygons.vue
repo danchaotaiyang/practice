@@ -211,8 +211,8 @@ export default {
             let webPoints = [];
             let r = this.radius / this.level * k;
             for (let i = 0; i < this.total; i++) {
-                let x = r * Math.sin(i * this.onePiece) + Math.sin(360 / this.total / 2),
-                    y = r * Math.cos(i * this.onePiece) + Math.cos(360 / this.total / 2);
+                let x = r * Math.sin(i * this.onePiece),
+                    y = r * Math.cos(i * this.onePiece);
                 webs += `${x}, ${y} `;
                 webPoints.push({ x, y });
             }
@@ -225,8 +225,8 @@ export default {
             let points = [];
             for (let k = 0; k < this.total; k++) {
                 let r = this.radius * (value[k] - this.min) / (this.max - this.min);
-                let x = r * Math.sin(k * this.onePiece) + Math.sin(360 / this.total / 2);
-                let y = r * Math.cos(k * this.onePiece) + Math.cos(360 / this.total / 2);
+                let x = r * Math.sin(k * this.onePiece);
+                let y = r * Math.cos(k * this.onePiece);
                 area += `${x}, ${y} `;
                 points.push({ x, y });
             }
