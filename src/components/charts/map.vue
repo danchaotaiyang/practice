@@ -1,6 +1,6 @@
 <template>
 <div class="mercator" ref="mercator">
-    <svg ref="svg" :width="width" :height="height">
+    <svg ref="svg" :width="clientWidth" :height="clientHeight">
         <g class="cities" ref="cities"></g>
     </svg>
     <tool-tip class="tooltip" ref="tooltip" :data="tooltip"></tool-tip>

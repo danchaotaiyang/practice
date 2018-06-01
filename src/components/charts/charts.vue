@@ -1,5 +1,6 @@
 <template>
 <div class="main-wrap">
+    <polygons :data="polygonsData" :width="400" :height="400"></polygons>
     <bar :data="initbardata" :width="1200" :height="300" :refresh.sync="refresh"></bar>
     <bar :data="initbardata" :width="1200" :height="300" :refresh.sync="refresh"></bar>
     <linear :data="initsigndata" :width="1200" :height="300" :refresh.sync="refresh"></linear>
@@ -14,6 +15,7 @@ import * as d3 from 'd3';
 import Linear from '@/components/charts/linear';
 import Bar from '@/components/charts/bar';
 import Maps from '@/components/charts/map';
+import Polygons from '@/components/charts/polygons';
 
 export default {
     data() {
@@ -2564,9 +2566,15 @@ export default {
             mapsData: {
                 series: []
             },
+            polygonsData: {
+                fields: ['语文', '数学', '外语', '物理', '化学'],
+                values: [
+                    [100, 200, 130, 140, 150]
+                ]
+            }
         };
     },
-    components: { Linear, Bar, Maps },
+    components: { Linear, Bar, Maps, Polygons },
     computed: {
         datum() {
             return d3.merge(this.data.map(item => item.list));
@@ -2627,8 +2635,11 @@ export default {
                 this.mapsData.series.push({
                     label: i,
                     value: Math.random() * 100
-                })
+                });
             }
+        },
+        inPolygonsData() {
+
         }
     },
     created() {
