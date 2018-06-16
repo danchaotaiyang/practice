@@ -1,11 +1,6 @@
 <template>
 <div class="drag-wrap" ref="wrap" :style="style" @mousedown="startUp">
-    <div ref="head" v-if="$slots.head">
-        <slot name="head"></slot>
-    </div>
-    <div ref="body">
-        <slot name="body"></slot>
-    </div>
+    <slot></slot>
 </div>
 </template>
 
@@ -30,6 +25,9 @@ export default {
         confine: {
             type: Boolean, default: false
         },
+        random: {
+            type: Boolean, default: false
+        },
         mode: {
             type: String, default: 'absolute'
         }
@@ -38,8 +36,8 @@ export default {
         style() {
             let axiY = this.axiY, axiX = this.axiX;
             if (this.confine) {
-                axiY = axiY < 0 ? 0 : axiY > this.maxH ? this.maxH : axiY;
-                axiX = axiX < 0 ? 0 : axiX > this.maxW ? this.maxW : axiX;
+                axiY = Math.max(0, Math.min(axiY, this.maxH));
+                axiX = Math.max(0, Math.min(axiX, this.maxW));
             }
             return {position: this.mode, top: `${axiY}px`, left: `${axiX}px`};
         }
@@ -70,6 +68,10 @@ export default {
         this.wrap = this.$refs.wrap;
         this.range = this.mode === 'fixed' ? document.body : this.wrap.parentNode;
         this.confined();
+        if (this.random) {
+            this.axiX = Math.random() * this.maxW;
+            this.axiY = Math.random() * this.maxH;
+        }
     },
     watch: {
         ranW(curW) {

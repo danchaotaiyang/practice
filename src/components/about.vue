@@ -3,16 +3,16 @@
     关于
     <chart-line class="line-bottom" :data="data" :width="width" height="19" stroke="#cccccc"></chart-line>
     <div class="drags">
-        <div class="draggable" v-draggable:fixed.random.range>可以拖拽</div>
-        <div class="draggable" v-draggable:fixed.random>可以拖拽可以拖拽可以拖拽</div>
+        <div class="draggable" v-draggable:fixed.random.confine>可以拖拽</div>
+        <div class="draggable" v-draggable:absolute.random.confine>可以拖拽可以拖拽可以拖拽</div>
+        <div class="draggable" v-draggable:absolute.random>依然可以拖拽</div>
     </div>
     <hunt v-draggable:fixed.center></hunt>
-    <draggable mode="fixed" :confine="true">
-        <div slot="head">
-            1
-        </div>
-        <div slot="body">2</div>
-    </draggable>
+    <div class="drags">
+        <draggable mode="absolute" confine random>
+            <div style="color: #ccc">测试拖拽</div>
+        </draggable>
+    </div>
 </div>
 </template>
 

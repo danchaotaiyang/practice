@@ -1,30 +1,27 @@
 <template>
 <div class="main-wrap">
+    <polygons :data="polygonsData" :width="400" :height="400"></polygons>
     <bar :data="initbardata" :width="1200" :height="300" :refresh.sync="refresh"></bar>
     <bar :data="initbardata" :width="1200" :height="300" :refresh.sync="refresh"></bar>
     <linear :data="initsigndata" :width="1200" :height="300" :refresh.sync="refresh"></linear>
+    <maps :data="mapsData" :width="1200" :height="600"></maps>
     <button @click="upLineDate">更新折线图</button>
     <button @click="inLineData">替换折线图</button>
-<!--
-    <pie :data="initpiedata" :width="1200" :height="300" :refresh.sync="refresh"></pie>
-    <button @click="upPieData">更新饼图</button>
-    <button @click="inPieData">替换饼图</button>
--->
 </div>
 </template>
 
 <script>
 import * as d3 from 'd3';
 import Linear from '@/components/charts/linear';
-import Pie from '@/components/charts/pie';
 import Bar from '@/components/charts/bar';
+import Maps from '@/components/charts/map';
+import Polygons from '@/components/charts/polygons';
 
 export default {
     data() {
         return {
             refresh: false,
             lineChanged: false,
-            pieChanged: false,
             lineData: [],
             lineData1: [
                 {
@@ -2507,49 +2504,44 @@ export default {
                         label: "2018/05/16"
                     }, { value: 0, label: "2018/05/17" }]
                 }],
-            pieData: [],
-            pieData1: [
-                ['小米', 60.8],
-                ['三星', 58.4],
-                ['联想', 47.3],
-                ['苹果', 46.6],
-                ['华为', 41.3],
-                ['酷派', 40.1],
-                ['小米', 60.8],
-                ['三星', 58.4],
-                ['联想', 47.3],
-                ['苹果', 46.6],
-                ['华为', 41.3],
-                ['酷派', 40.1],
-                ['小米', 60.8],
-                ['三星', 58.4],
-                ['联想', 47.3],
-                ['苹果', 46.6],
-                ['华为', 41.3],
-                ['酷派', 40.1],
-                ['小米', 60.8],
-                ['三星', 58.4],
-                ['联想', 47.3],
-                ['苹果', 46.6],
-                ['华为', 41.3],
-                ['酷派', 40.1],
-                ['小米', 60.8],
-                ['三星', 58.4],
-                ['联想', 47.3],
-                ['苹果', 46.6],
-                ['华为', 41.3],
-                ['酷派', 40.1],
-                ['其他', 111.5]
-            ],
-            pieData2: [
-                ['小米', 60.8],
-                ['三星', 58.4],
-                ['联想', 47.3],
-                ['苹果', 46.6],
-                ['华为', 41.3],
-                ['酷派', 40.1],
-                ['其他', 111.5]
-            ],
+            initsigndata: {
+                legend: {
+                    data: []
+                },
+                xAxis: {
+                    type: 'time',
+                    format: '%Y-%m-%d'
+                },
+                yAxis: {
+                    type: 'value'
+                },
+                series: []
+            },
+            initbardata: {
+                legend: {
+                    data: []
+                },
+                xAxis: {
+                    type: 'string'
+                },
+                yAxis: {
+                    type: 'value'
+                },
+                series: []
+            },
+            barlinedata: {
+                xAxis: ['加盟商', '大型活动', '微信', '产品自然量', 'APP', 'QQ', '小程序', '400电话', '官网（澳洲）粉丝通', '百度贴吧', '伯明翰大学', '产品合作', '商务合作', '诺丁汉大学', '个人号', '线下渠道', '微博'],
+                data1: [{ title: '当期转化率', list: [{ label: '加盟商', value: 0 }, { label: '大型活动', value: 0 }, { label: '微信', value: 0.06 }, { label: '产品自然量', value: 0 }, { label: 'APP', value: 0.23 }, { label: 'QQ', value: 0.3 }, { label: '小程序', value: 0.1 }, { label: '400电话', value: 0.14 }, { label: '官网（澳洲）粉丝通', value: 0 }, { label: '百度贴吧', value: 0 }, { label: '伯明翰大学', value: 0 }, { label: '产品合作', value: 0 }, { label: '商务合作', value: 0 }, { label: '诺丁汉大学', value: 0 }, { label: '个人号', value: 0 }, { label: '线下渠道', value: 0 }, { label: '微博', value: 0 }] }],
+                yAxis1: [0, 1],
+                classes1: ['当期转化率'],
+                classes: ['注册量', '当期签约量', '实际签约量'],
+                data: [{ value: 23, label: '加盟商', class: '注册量' }, { value: 20, label: '大型活动', class: '注册量' }, { value: 17, label: '微信', class: '注册量' }, { value: 13, label: '产品自然量', class: '注册量' }, { value: 13, label: 'APP', class: '注册量' }, { value: 10, label: 'QQ', class: '注册量' }, { value: 10, label: '小程序', class: '注册量' }, { value: 7, label: '400电话', class: '注册量' }, { value: 4, label: '官网（澳洲）粉丝通', class: '注册量' }, { value: 3, label: '百度贴吧', class: '注册量' }, { value: 2, label: '伯明翰大学', class: '注册量' }, { value: 2, label: '产品合作', class: '注册量' }, { value: 2, label: '商务合作', class: '注册量' }, { value: 1, label: '诺丁汉大学', class: '注册量' }, { value: 1, label: '个人号', class: '注册量' }, { value: 1, label: '线下渠道', class: '注册量' }, { value: 1, label: '微博', class: '注册量' }, { value: 1, label: '微信', class: '当期签约量' }, { value: 1, label: '400电话', class: '当期签约量' }, {
+                    value: 3,
+                    label: 'QQ',
+                    class: '当期签约量'
+                }, { value: 3, label: 'APP', class: '当期签约量' }, { value: 1, label: '小程序', class: '当期签约量' }, { value: 1, label: '微信', class: '实际签约量' }, { value: 1, label: '400电话', class: '实际签约量' }, { value: 3, label: 'QQ', class: '实际签约量' }, { value: 3, label: 'APP', class: '实际签约量' }, { value: 1, label: '产品自然量', class: '实际签约量' }, { value: 1, label: '小程序', class: '实际签约量' }],
+                yAxis: [0, 23]
+            },
             barData: [
                 ['小米', 60.8],
                 ['三星', 58.4],
@@ -2571,40 +2563,18 @@ export default {
                 ['酷派2', 40.1],
                 ['其他', 111]
             ],
-            initsigndata: {
-                legend: {
-                    data: []
-                },
-                xAxis: {
-                    type: 'time',
-                    format: '%Y-%m-%d'
-                },
-                yAxis: {
-                    type: 'value'
-                },
+            mapsData: {
                 series: []
             },
-            initpiedata: {
-                legend: {
-                    data: []
-                },
-                series: []
-            },
-            initbardata: {
-                legend: {
-                    data: []
-                },
-                xAxis: {
-                    type: 'string'
-                },
-                yAxis: {
-                    type: 'value'
-                },
-                series: []
+            polygonsData: {
+                fields: ['语文', '数学', '外语', '物理', '化学'],
+                values: [
+                    [100, 200, 130, 140, 150]
+                ]
             }
         };
     },
-    components: { Linear, Pie, Bar },
+    components: { Linear, Bar, Maps, Polygons },
     computed: {
         datum() {
             return d3.merge(this.data.map(item => item.list));
@@ -2618,31 +2588,14 @@ export default {
                 let list = item.list.map((v) => {
                     let label = new Date(v.label);
                     let value = v.value;
-                    return {label, value};
+                    return { label, value };
                 });
                 legend.data[index] = item.title;
                 return {
                     name: item.title, data: list
                 };
             });
-            return Object.assign({}, this.initsigndata, {legend, series});
-        },
-        formatPie() {
-            let data = this.pieData;
-            let legend = Object.assign({}, this.initpiedata.legend);
-            let series = [];
-            series.push({
-                name: '2014',
-                // --------------------------
-                radius: [120, 40],
-                data: data.map((item, index) => {
-                    let label = item[0];
-                    let value = item[1];
-                    legend.data[index] = item[0];
-                    return {label, value};
-                })
-            });
-            return Object.assign({}, this.initpiedata, {legend, series});
+            return Object.assign({}, this.initsigndata, { legend, series });
         },
         formatBar() {
             let data = this.barData;
@@ -2653,7 +2606,7 @@ export default {
                     name: item[0], data: item[1]
                 };
             });
-            return Object.assign({}, this.initbardata, {legend, series});
+            return Object.assign({}, this.initbardata, { legend, series });
         },
         upLineDate() {
             let ary = [57, 81, 99, 112, 36, 36, 26, 91];
@@ -2673,23 +2626,32 @@ export default {
             this.lineChanged = !this.lineChanged;
             this.refresh = true;
         },
-        upPieData() {
-
-        },
-        inPieData() {
-            this.pieData = this.pieChanged ? this.pieData2 : this.pieData1;
-            this.initpiedata = this.formatPie();
-            this.pieChanged = !this.pieChanged;
+        inBarData() {
+            this.initbardata = this.formatBar();
             this.refresh = true;
         },
         inBarData() {
             this.initbardata = this.formatBar();
             this.refresh = true;
+        },
+        inMapData() {
+            for (let i = 1; i <= 36; i++) {
+                this.mapsData.series.push({
+                    label: i,
+                    value: Math.random() * 100
+                });
+            }
+        },
+        inPolygonsData() {
+
         }
+    },
+    created() {
+        this.inMapData();
+
     },
     mounted() {
         this.inLineData();
-        this.inPieData();
         this.inBarData();
     }
 };

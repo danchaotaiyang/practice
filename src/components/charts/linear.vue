@@ -258,45 +258,6 @@ export default {
                 .style('opacity', opacity || 0);
         },
         inventFocus(e) {
-/*
-            let that = this;
-            this.elements.rect
-                .on('mousemove', function () {
-                    if (that.screen.length === 0) return;
-
-                    let xScale = that.xScale,
-                        yScale = that.yScale;
-
-                    let mouseX = d3.mouse(this)[0] - 2 | 0,
-                        x0 = xScale.invert(mouseX);
-
-                    let data = that.screen[0].data,
-                        bisect = d3.bisector(d => d.label).left;
-
-                    let index = x0 && bisect(data, x0);
-
-                    if (index >= data.length) {
-                        return;
-                    }
-
-                    let x1 = data[index].label;
-                    that.focus.xFocus = xScale(x1);
-
-                    that.focus.yFocus = that.series.map((d, i) => {
-                        let y1 = d.data[index].value;
-                        that.tooltip.desc[i] = {
-                            name: that.exclude[i] ? '--' : d.name,
-                            value: that.exclude[i] ? '--' : d.data[index].value,
-                            color: d.color
-                        };
-                        return yScale(y1);
-                    });
-
-                    that.tooltip.tipX = d3.event.layerX + 20;
-                    that.tooltip.tipY = d3.event.layerY;
-                    that.tooltip.title = that.dateFormat(new Date(x0).getTime() + 86400000);
-                });
-*/
             if (this.screen.length === 0) return;
 
             let xScale = this.xScale,

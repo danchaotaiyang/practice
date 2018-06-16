@@ -6,7 +6,7 @@ export const draggable = Vue.directive('draggable', {
         Object.keys(style).forEach(i => el.style[i] = style[i]);
     },
     inserted(el, {arg, modifiers}) {
-        const {range, random, center} = modifiers;
+        const {confine, random, center} = modifiers;
         const drag = {
             initRange() {
                 el.range = arg === 'fixed' ? document.body : el.parentNode;
@@ -18,8 +18,8 @@ export const draggable = Vue.directive('draggable', {
             },
             setPosition({left, top}) {
                 const styles = {
-                    left: range && left < 0 ? 0 : range && left > el.maxW ? el.maxW : left,
-                    top: range && top < 0 ? 0 : range && top > el.maxH ? el.maxH : top,
+                    left: confine && left < 0 ? 0 : confine && left > el.maxW ? el.maxW : left,
+                    top: confine && top < 0 ? 0 : confine && top > el.maxH ? el.maxH : top,
                     width: el.clientWidth,
                     height: el.clientHeight
                 };
