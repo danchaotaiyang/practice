@@ -218,7 +218,6 @@ export default {
             exit
                 .remove();
 
-
             let drag = d3.drag();
             this.elements.focus
                 .call(drag

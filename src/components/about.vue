@@ -12,7 +12,6 @@
         <draggable mode="absolute" confine random>
             <div style="color: #ccc">测试拖拽</div>
         </draggable>
-
     </div>
 </div>
 </template>
@@ -21,6 +20,7 @@
 import ChartLine from '@/basic/chartLine';
 import Hunt from '@/components/hunt';
 import Draggable from '@/components/draggable';
+
 export default {
     components: {ChartLine, Hunt, Draggable},
     data() {

@@ -36,8 +36,8 @@ export default {
         style() {
             let axiY = this.axiY, axiX = this.axiX;
             if (this.confine) {
-                axiY = Math.max(0, Math.min(axiY , this.maxH));
-                axiX = Math.max(0, Math.min(axiX , this.maxW));
+                axiY = Math.max(0, Math.min(axiY, this.maxH));
+                axiX = Math.max(0, Math.min(axiX, this.maxW));
             }
             return {position: this.mode, top: `${axiY}px`, left: `${axiX}px`};
         }
