@@ -68,13 +68,13 @@ export default {
     },
     computed: {
         fields() {
-            return [...this.data.fields];
+            return [...this.data.axis];
         },
         values() {
-            return [...this.data.values];
+            return [...this.data.data];
         },
         radius() {
-            return d3.min([this.innerWidth, this.innerHeight]) / 2;
+            return d3.min([this.innerWidth, this.innerHeight]) / 2 - 30;
         },
         total() {
             return this.fields.length;
@@ -200,8 +200,8 @@ export default {
                 .enter()
                 .append('text')
                 .attr('x', d => d.x)
-                .attr('y', d => d.y)
-                .text((d, i) => this.fields[i])
+                .attr('y', d => -d.y)
+                .text((d, i) => this.fields[i].label)
                 .style('text-anchor', 'middle');
         },
     },
@@ -210,23 +210,26 @@ export default {
             let webs = '';
             let webPoints = [];
             let r = this.radius / this.level * k;
+            let r2 = this.radius + 20;
             for (let i = 0; i < this.total; i++) {
                 let x = r * Math.sin(i * this.onePiece),
-                    y = r * Math.cos(i * this.onePiece);
+                    y = -r * Math.cos(i * this.onePiece),
+                    x1 = r2 * Math.sin(i * this.onePiece),
+                    y1 = -r2 * Math.cos(i * this.onePiece);
                 webs += `${x}, ${y} `;
-                webPoints.push({ x, y });
+                k === this.level && webPoints.push({ x: x1, y: y1 });
             }
             this.polygons.webs.push(webs);
             this.polygons.webPoints.push(webPoints);
         }
         for (let i = 0; i < this.values.length; i++) {
-            let value = this.values[i];
+            let value = this.values[i].data;
             let area = '';
             let points = [];
             for (let k = 0; k < this.total; k++) {
-                let r = this.radius * (value[k] - this.min) / (this.max - this.min);
+                let r = this.radius * (value[k] - this.min) / (this.fields[k].max - this.min);
                 let x = r * Math.sin(k * this.onePiece);
-                let y = r * Math.cos(k * this.onePiece);
+                let y = -r * Math.cos(k * this.onePiece);
                 area += `${x}, ${y} `;
                 points.push({ x, y });
             }
@@ -235,7 +238,7 @@ export default {
                 points
             });
         }
-        let textRadius = this.radius + 20;
+        let textRadius = this.radius + 40;
         for (let ii = 0; ii < this.total; ii++) {
             let x = textRadius * Math.sin(ii * this.onePiece);
             let y = textRadius * Math.cos(ii * this.onePiece);

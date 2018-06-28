@@ -1,5 +1,5 @@
 <template>
-<div class="linear" ref="linear">
+<div class="bar" ref="bar">
     <svg ref="svg" :width="width" :height="height">
         <g class="view" ref="view">
             <g class="paths" ref="paths"></g>
@@ -7,23 +7,17 @@
             <g class="yAxis" ref="yAxis"></g>
         </g>
         <g class="legend" ref="legend" :transform="`translate(${legend.x}, ${legend.y})`">
-            <g v-for="(d, i) in legend.data" :transform="`translate(${i * legendWidth % innerWidth}, ${((i * legendWidth / innerWidth) | 0) * 22})`" @click="updateView(i)">
-                <line x1="0" y1="6" x2="20" y2="6" :stroke="series[i].color" stroke-width="1.5"></line>
-                <circle cx="10" cy="6" r="4" :stroke="series[i].color" stroke-width="1.5"></circle>
-                <text class="legendText" x="25" y="11" fill="#000">{{d}}</text>
+            <g v-for="(d, i) in legend.data" :transform="`translate(${i * legendTickWidth % legendClientWidth}, ${((i * legendTickWidth / legendClientWidth) | 0) * 22})`" @click="updateView(i)">
+                <rect rx="2" ry="2" :fill="series[i].color"></rect>
+                <text class="legendText" x="18" y="11" fill="#000">{{d}}</text>
             </g>
         </g>
         <g class="focus" ref="focus" opacity="0">
             <rect class="rect" ref="rect" :x="left" :y="top" :width="innerWidth" :height="innerHeight" @mouseover="opacityFocus(1)" @mouseout="opacityFocus(0)" @mousemove="inventFocus"></rect>
-            <line :x1="focus.xFocus" :y1="top" :x2="focus.xFocus" :y2="bottom"></line>
-            <g v-for="(d, i) in series" v-show="!exclude[i]">
-                <line :x1="left" :y1="focus.yFocus[i]" :x2="focus.xFocus" :y2="focus.yFocus[i]"></line>
-                <circle :cx="focus.xFocus" :cy="focus.yFocus[i]" :fill="series[i].color" r="4" stroke-width="1"></circle>
-            </g>
         </g>
         <defs>
-            <clipPath id="clipPath">
-                <rect :width="innerWidth + 2" :height="innerHeight + 2" :x="left" :y="top - 2"></rect>
+            <clipPath id="clipPath1">
+                <rect :width="innerWidth" :height="bottom" :x="left" :y="top"></rect>
             </clipPath>
         </defs>
     </svg>
@@ -41,21 +35,21 @@ export default {
     data() {
         return {
             defaultLegend: {
-                type: 'linear',
+                type: 'bar',
                 x: 10,
                 y: 10,
                 data: []
             },
             defaultConfig: {
-                padding: {top: 40, right: 30, bottom: 30, left: 30},
-                duration: 200,
-                curve: 'curveLinear'
+                margin: {top: 40, right: 30, bottom: 30, left: 30},
+                duration: 200
             },
             elements: {},
             exclude: [],
+            scrollX: 0,
             focus: {
-                xFocus: 0,
-                yFocus: [],
+                focusX: 0,
+                focusY: [],
             },
             tooltip: {
                 title: '',
@@ -97,9 +91,9 @@ export default {
         },
         config() {
             let config = {};
-            let {padding, curve, colors, duration} = this.data;
-            if (padding) {
-                config.padding = padding;
+            let {margin, curve, colors, duration} = this.data;
+            if (margin) {
+                config.margin = margin;
             }
             if (curve) {
                 config.curve = curve;
@@ -120,10 +114,10 @@ export default {
             return [...color, ...colors];
         },
         clientWidth() {
-            return this.width || this.$refs.linear.clientWidth;
+            return this.width || this.$refs.bar.clientWidth;
         },
         clientHeight() {
-            return this.height || this.$refs.linear.clientHeight;
+            return this.height || this.$refs.bar.clientHeight;
         },
         innerWidth() {
             return this.right - this.left;
@@ -132,25 +126,25 @@ export default {
             return this.bottom - this.top;
         },
         top() {
-            return this.config.padding.top;
+            return this.config.margin.top;
         },
         right() {
-            return this.clientWidth - this.config.padding.right;
+            return this.clientWidth - this.config.margin.right;
         },
         bottom() {
-            return this.clientHeight - this.config.padding.bottom;
+            return this.clientHeight - this.config.margin.bottom;
         },
         left() {
-            return this.config.padding.left;
+            return this.config.margin.left;
         },
-        merge() {
-            return d3.merge(this.screen.map(item => item.data));
+        dataWidth() {
+            return this.right + 1000;
         },
         xDomain() {
-            return d3.extent(this.merge, d => d.label);
+            return this.screen.map(d => d.name);
         },
         yDomain() {
-            return d3.extent(this.merge, d => d.value);
+            return [d3.max(this.screen, d => d.data), 0];
         },
         xScale() {
             let scale;
@@ -158,11 +152,13 @@ export default {
                 case 'time':
                     scale = d3.scaleTime();
                     break;
+                case 'string':
+                    scale = d3.scaleBand();
+                    break;
                 default:
                     scale = d3.scaleLinear();
             }
-            // return scale.range([this.left, this.right]).domain(this.xDomain).nice();
-            return scale.range([this.left, this.right]).domain(this.xDomain);
+            return scale.range([this.left, this.dataWidth]).domain(this.xDomain);
         },
         yScale() {
             let scale;
@@ -170,66 +166,73 @@ export default {
                 case 'time':
                     scale = d3.scaleTime();
                     break;
+                case 'string':
+                    scale = d3.scaleBand();
+                    break;
                 default:
                     scale = d3.scaleLinear();
             }
-            return scale.range([this.bottom, this.top]).domain(this.yDomain);
+            return scale.range([this.top, this.bottom]).domain(this.yDomain);
         },
-        lineFrom() {
-            return d3.line()
-                .x(d => this.xScale(d.label))
-                .y(this.bottom);
-        },
-        lineTo() {
-            return d3.line()
-                .x(d => this.xScale(d.label))
-                .y(d => this.yScale(d.value))
-                .curve(d3[this.config.curve]);
-        },
-        legendWidth() {
+        legendTickWidth() {
             let lwp = this.config.legendWidth;
-            let max = d3.max(this.legend.data, d => d.length);
-            return lwp ? (this.innerWidth * lwp) / 100 : max * 12 + 40;
+            let tick = d3.max(this.legend.data, d => d.length);
+            return lwp ? (this.innerWidth * lwp) / 100 : tick * 12 + 40;
         },
-        dateFormat() {
-            return d3.timeFormat(this.data.xAxis.format);
+        legendClientWidth() {
+            return ((this.innerWidth / this.legendTickWidth) | 0) * this.legendTickWidth;
+        },
+        drag() {
+            return d3
+                .drag()
+                .on('drag', function () {
+                    d3
+                        .select(this)
+                        .attr('transform', `translateX(${d3.event.x})`);
+                });
         }
     },
     methods: {
-        inventLinear() {
+        inventBar() {
             let {paths} = this.elements;
             paths
-                .selectAll('path')
+                .selectAll('rect')
                 .remove();
+            paths
+                .attr('clip-path', 'url(#clipPath1)');
+            let rect = paths
+                .selectAll('rect')
+                .data(this.screen);
 
-            let lines = paths
-                .selectAll('path')
-                .data(this.series);
-
-            let enter = lines.enter();
-            let exit = lines.exit();
+            let enter = rect.enter();
+            let exit = rect.exit();
 
             enter
-                .append('path')
-                .datum(d => d.data)
-                .attr('fill', 'none')
-                .attr('stroke', (d, i) => this.series[i].color)
-                .attr('stroke-width', 1.5)
-                .attr('stroke-linejoin', 'round')
-                .attr('stroke-linecap', 'round')
-                .attr('clip-path', 'url(#clipPath)')
-                .attr('d', this.lineFrom)
-                .transition()
-                .duration(this.duration)
-                .attr('d', this.lineTo)
-                .attr('opacity', (d, i) => this.exclude[i] ? 0 : 1);
+                .append('rect')
+                .attr('fill', d => d.color)
+                .attr('x', (d, i) => this.xScale.bandwidth() * i + this.left + (this.xScale.bandwidth() - 40) / 2)
+                .attr('y', d => this.yScale(d.data))
+                .attr('width', 40)
+                .attr('height', d => this.bottom - this.yScale(d.data));
 
             exit
-                .attr('opacity', 1)
-                .transition()
-                .duration(this.duration)
-                .attr('opacity', 0)
                 .remove();
+
+
+            let drag = d3.drag();
+            this.elements.focus
+                .call(drag
+                    .on('drag', () => {
+                        let {paths, xAxis} = this.elements;
+                        let scrollX = this.scrollX + d3.event.dx;
+                        this.scrollX = Math.max(-(this.dataWidth - this.innerWidth - this.left), Math.min(0, scrollX));
+                        paths
+                            .selectAll('rect')
+                            .attr('transform', `translate(${this.scrollX}, 0)`);
+                        xAxis
+                            .attr('transform', `translate(${this.scrollX}, ${this.bottom})`);
+                    })
+                );
 
             this.calculateAxis();
         },
@@ -239,7 +242,7 @@ export default {
                 .attr('transform', `translate(0, ${this.bottom})`)
                 .transition()
                 .duration(this.duration)
-                .call(d3.axisBottom(this.xScale).tickFormat(d => this.dateFormat(d)));
+                .call(d3.axisBottom(this.xScale));
 
             yAxis
                 .attr('transform', `translate(${this.left}, 0)`)
@@ -261,45 +264,27 @@ export default {
         inventFocus(e) {
             if (this.screen.length === 0) return;
 
-            let xScale = this.xScale,
-                yScale = this.yScale;
+            let scaleX = this.xScale;
 
-            let mouseX = e.layerX,
-                x0 = xScale.invert(mouseX + 10);
-
-            let data = this.screen[0].data,
-                bisect = d3.bisector(d => d.label).left;
-
-            let index = x0 && bisect(data, x0) - 1;
-            if (index >= data.length) {
-                return;
-            }
-
-            let x1 = data[index].label;
-            this.focus.xFocus = xScale(x1);
-
-            this.focus.yFocus = this.series.map((d, i) => {
-                let y1 = d.data[index].value;
-                this.tooltip.desc[i] = {
-                    name: this.exclude[i] ? '--' : d.name,
-                    value: this.exclude[i] ? '--' : d.data[index].value,
-                    color: d.color
-                };
-                return yScale(y1);
-            });
+            let mouseX = e.layerX - this.left,
+                index = ((mouseX - this.scrollX) / scaleX.bandwidth());
+            let data = this.screen[index | 0];
+            this.tooltip = {
+                title: data.name,
+                desc: [{
+                    name: '',
+                    value: data.data,
+                    color: data.color
+                }]
+            };
 
             this.tooltip.tipX = e.layerX + 20;
             this.tooltip.tipY = e.layerY;
-            this.tooltip.title = this.dateFormat(x0);
-
         },
-        initializeLinear() {
-
+        initializeBar() {
             if (this.screen.length === 0) return;
-
-            // this.inventFocus();
-            this.inventLinear();
-            this.calculateAxis();
+            let wrap = d3.select(this.$refs.bar);
+            Object.keys(this.$refs).forEach(d => this.elements[d] = wrap.select(`.${d}`));      this.inventBar();
         },
         updateView(index) {
             let {paths, legend} = this.elements;
@@ -314,13 +299,8 @@ export default {
                         .transition()
                         .duration(this.duration);
                     lg
-                        .select('line')
-                        .attr('stroke', () => {
-                            return this.exclude[i] ? '#ddd' : this.series[i].color;
-                        });
-                    lg
-                        .select('circle')
-                        .attr('stroke', () => {
+                        .select('rect')
+                        .attr('fill', () => {
                             return this.exclude[i] ? '#ddd' : this.series[i].color;
                         });
                     lg
@@ -336,34 +316,19 @@ export default {
                 .attr('opacity', this.screen.length === 0 ? 0 : 1);
 
             if (this.screen.length > 0) {
-                paths
-                    .selectAll('path')
-                    .each((d, i, t) => {
-                        d3
-                            .select(t[i])
-                            .transition()
-                            .duration(this.duration)
-                            .attr('opacity', this.exclude[i] ? 0 : 1)
-                            .attr('d', this.lineTo);
-                    });
+                this.inventBar();
             }
-
-            this.calculateAxis();
         }
-    },
-    mounted() {
-        let wrap = d3.select(this.$refs.linear);
-        Object.keys(this.$refs).forEach(d => this.elements[d] = wrap.select(`.${d}`));
     },
     watch: {
         data() {
             this.$nextTick(() => {
                 if (!this.init) {
                     this.exclude = new Array(this.series.length).fill(false);
-                    this.initializeLinear();
+                    this.initializeBar();
                     this.init = true;
                 } else {
-                    this.inventLinear();
+                    this.inventBar();
                 }
                 this.$emit('update:refresh', false);
             });
@@ -373,55 +338,55 @@ export default {
 </script>
 
 <style scoped>
-.linear svg {
+.bar svg {
     -webkit-user-select: none;
     -moz-user-select: none;
     -ms-user-select: none;
     user-select: none;
 }
 
-.linear line {
+.bar line {
     shape-rendering: crispEdges;
 }
 
-.linear {
+.bar {
     position: relative;
     height: 100%;
 }
 
-.linear .axis path,
-.linear .axis line {
+.bar .axis path,
+.bar .axis line {
     fill: none;
     stroke: black;
     shape-rendering: crispEdges;
 }
 
-.linear .legend g {
+.bar .legend g {
     cursor: pointer;
     font-size: 12px;
 }
 
-.linear .legend g circle {
+.bar .legend g circle {
     fill: #fff;
 }
 
-.linear .legend g rect {
-    width: 12px;
-    height: 12px;
+.bar .legend g rect {
+    width: 13px;
+    height: 13px;
 }
 
-.linear .focus rect {
+.bar .focus rect {
     fill: none;
     pointer-events: all;
 }
 
-.linear .focus line {
+.bar .focus line {
     stroke: #666;
     stroke-dasharray: 2, 1;
     pointer-events: none;
 }
 
-.linear .focus circle {
+.bar .focus circle {
     stroke: #333;
     pointer-events: none;
 }

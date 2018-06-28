@@ -4,9 +4,9 @@
     <bar :data="initbardata" :width="1200" :height="300" :refresh.sync="refresh"></bar>
     <bar :data="initbardata" :width="1200" :height="300" :refresh.sync="refresh"></bar>
     <linear :data="initsigndata" :width="1200" :height="300" :refresh.sync="refresh"></linear>
-    <maps :data="mapsData" :width="1200" :height="600"></maps>
     <button @click="upLineDate">更新折线图</button>
     <button @click="inLineData">替换折线图</button>
+    <maps :data="mapsData" :width="1200" :height="600"></maps>
 </div>
 </template>
 
@@ -23,6 +23,7 @@ export default {
             refresh: false,
             lineChanged: false,
             lineData: [],
+/*
             lineData1: [
                 {
                     title: '资源量',
@@ -1682,828 +1683,161 @@ export default {
                         value: 0,
                         label: '2018/05/16'
                     }, { value: 0, label: '2018/05/17' }]
-                }],
+                }
+            ],
+*/
+            lineData1: [
+                {
+                    title: "资源量",
+                    list: [
+                        { value: 50, label: '2017/11/18' },
+                        { value: 50, label: '2017/11/19' },
+                        { value: 80, label: '2017/11/20' },
+                        { value: 85, label: '2017/11/21' },
+                        { value: 30, label: '2017/11/22' },
+                        { value: 50, label: '2017/11/23' },
+                        { value: 54, label: '2017/11/24' },
+                        { value: 70, label: '2017/11/25' },
+                        { value: 46, label: '2017/11/26' },
+                        { value: 65, label: '2017/11/27' },
+                        { value: 32, label: '2017/11/28' },
+                        { value: 48, label: '2017/11/29' },
+                        { value: 94, label: '2017/11/30' },
+                        { value: 27, label: '2017/12/01' },
+                        { value: 73, label: '2017/12/02' },
+                        { value: 55, label: '2017/12/03' },
+                        { value: 96, label: '2017/12/04' },
+                        { value: 41, label: '2017/12/05' },
+                        { value: 28, label: '2017/12/06' },
+                        { value: 78, label: '2017/12/07' }
+                    ]
+
+                }, {
+                    title: '当期签约量',
+                    list: [
+                        { value: 26, label: '2017/11/18' },
+                        { value: 40, label: '2017/11/19' },
+                        { value: 0, label: '2017/11/20' },
+                        { value: 15, label: '2017/11/21' },
+                        { value: 5, label: '2017/11/22' },
+                        { value: 48, label: '2017/11/23' },
+                        { value: 11, label: '2017/11/24' },
+                        { value: 0, label: '2017/11/25' },
+                        { value: 6, label: '2017/11/26' },
+                        { value: 0, label: '2017/11/27' },
+                        { value: 30, label: '2017/11/28' },
+                        { value: 12, label: '2017/11/29' },
+                        { value: 56, label: '2017/11/30' },
+                        { value: 7, label: '2017/12/01' },
+                        { value: 34, label: '2017/12/02' },
+                        { value: 5, label: '2017/12/03' },
+                        { value: 6, label: '2017/12/04' },
+                        { value: 1, label: '2017/12/05' },
+                        { value: 19, label: '2017/12/06' },
+                        { value: 22, label: '2017/12/07' }
+                    ]
+                }, {
+                    title: '实际签约量',
+                    list: [
+                        { value: 29, label: '2017/11/18' },
+                        { value: 40, label: '2017/11/19' },
+                        { value: 6, label: '2017/11/20' },
+                        { value: 19, label: '2017/11/21' },
+                        { value: 9, label: '2017/11/22' },
+                        { value: 49, label: '2017/11/23' },
+                        { value: 18, label: '2017/11/24' },
+                        { value: 2, label: '2017/11/25' },
+                        { value: 18, label: '2017/11/26' },
+                        { value: 2, label: '2017/11/27' },
+                        { value: 31, label: '2017/11/28' },
+                        { value: 20, label: '2017/11/29' },
+                        { value: 57, label: '2017/11/30' },
+                        { value: 10, label: '2017/12/01' },
+                        { value: 35, label: '2017/12/02' },
+                        { value: 25, label: '2017/12/03' },
+                        { value: 6, label: '2017/12/04' },
+                        { value: 3, label: '2017/12/05' },
+                        { value: 21, label: '2017/12/06' },
+                        { value: 24, label: '2017/12/07' }
+                    ]
+                }
+            ],
             lineData2: [
                 {
                     title: "资源量",
-                    list: [{ value: 0, label: '2017/11/18' }, {
-                        value: 0,
-                        label: '2017/11/19'
-                    }, { value: 0, label: '2017/11/20' }, {
-                        value: 1,
-                        label: '2017/11/21'
-                    }, { value: 0, label: '2017/11/22' }, {
-                        value: 5,
-                        label: '2017/11/23'
-                    }, { value: 0, label: '2017/11/24' }, {
-                        value: 0,
-                        label: '2017/11/25'
-                    }, { value: 0, label: '2017/11/26' }, {
-                        value: 0,
-                        label: '2017/11/27'
-                    }, { value: 0, label: '2017/11/28' }, {
-                        value: 0,
-                        label: '2017/11/29'
-                    }, { value: 0, label: '2017/11/30' }, {
-                        value: 0,
-                        label: '2017/12/01'
-                    }, { value: 0, label: '2017/12/02' }, {
-                        value: 0,
-                        label: '2017/12/03'
-                    }, { value: 0, label: '2017/12/04' }, {
-                        value: 0,
-                        label: '2017/12/05'
-                    }, { value: 0, label: '2017/12/06' }, {
-                        value: 0,
-                        label: '2017/12/07'
-                    }, { value: 0, label: '2017/12/08' }, {
-                        value: 0,
-                        label: '2017/12/09'
-                    }, { value: 0, label: '2017/12/10' }, {
-                        value: 0,
-                        label: '2017/12/11'
-                    }, { value: 7, label: '2017/12/12' }, {
-                        value: 1,
-                        label: '2017/12/13'
-                    }, { value: 1, label: '2017/12/14' }, {
-                        value: 1,
-                        label: '2017/12/15'
-                    }, { value: 0, label: '2017/12/16' }, {
-                        value: 0,
-                        label: '2017/12/17'
-                    }, { value: 6, label: '2017/12/18' }, {
-                        value: 1,
-                        label: '2017/12/19'
-                    }, { value: 1, label: '2017/12/20' }, {
-                        value: 1,
-                        label: '2017/12/21'
-                    }, { value: 2, label: '2017/12/22' }, {
-                        value: 0,
-                        label: '2017/12/23'
-                    }, { value: 0, label: '2017/12/24' }, {
-                        value: 0,
-                        label: '2017/12/25'
-                    }, { value: 0, label: '2017/12/26' }, {
-                        value: 1,
-                        label: '2017/12/27'
-                    }, { value: 0, label: '2017/12/28' }, {
-                        value: 2,
-                        label: '2017/12/29'
-                    }, { value: 0, label: '2017/12/30' }, {
-                        value: 0,
-                        label: '2017/12/31'
-                    }, { value: 0, label: '2018/01/01' }, {
-                        value: 6,
-                        label: '2018/01/02'
-                    }, { value: 0, label: '2018/01/03' }, {
-                        value: 0,
-                        label: '2018/01/04'
-                    }, { value: 0, label: '2018/01/05' }, {
-                        value: 0,
-                        label: '2018/01/06'
-                    }, { value: 0, label: '2018/01/07' }, {
-                        value: 0,
-                        label: '2018/01/08'
-                    }, { value: 0, label: '2018/01/09' }, {
-                        value: 0,
-                        label: '2018/01/10'
-                    }, { value: 0, label: '2018/01/11' }, {
-                        value: 1,
-                        label: '2018/01/12'
-                    }, { value: 0, label: '2018/01/13' }, {
-                        value: 0,
-                        label: '2018/01/14'
-                    }, { value: 0, label: '2018/01/15' }, {
-                        value: 0,
-                        label: '2018/01/16'
-                    }, { value: 3, label: '2018/01/17' }, {
-                        value: 0,
-                        label: '2018/01/18'
-                    }, { value: 0, label: '2018/01/19' }, {
-                        value: 0,
-                        label: '2018/01/20'
-                    }, { value: 0, label: '2018/01/21' }, {
-                        value: 0,
-                        label: '2018/01/22'
-                    }, { value: 0, label: '2018/01/23' }, {
-                        value: 0,
-                        label: '2018/01/24'
-                    }, { value: 0, label: '2018/01/25' }, {
-                        value: 0,
-                        label: '2018/01/26'
-                    }, { value: 0, label: '2018/01/27' }, {
-                        value: 0,
-                        label: '2018/01/28'
-                    }, { value: 0, label: '2018/01/29' }, {
-                        value: 2,
-                        label: '2018/01/30'
-                    }, { value: 0, label: '2018/01/31' }, {
-                        value: 0,
-                        label: '2018/02/01'
-                    }, { value: 1, label: '2018/02/02' }, {
-                        value: 0,
-                        label: '2018/02/03'
-                    }, { value: 0, label: '2018/02/04' }, {
-                        value: 0,
-                        label: '2018/02/05'
-                    }, { value: 0, label: '2018/02/06' }, {
-                        value: 1,
-                        label: '2018/02/07'
-                    }, { value: 0, label: '2018/02/08' }, {
-                        value: 1,
-                        label: '2018/02/09'
-                    }, { value: 0, label: '2018/02/10' }, {
-                        value: 2,
-                        label: '2018/02/11'
-                    }, { value: 5, label: '2018/02/12' }, {
-                        value: 0,
-                        label: '2018/02/13'
-                    }, { value: 0, label: '2018/02/14' }, {
-                        value: 0,
-                        label: '2018/02/15'
-                    }, { value: 0, label: '2018/02/16' }, {
-                        value: 0,
-                        label: '2018/02/17'
-                    }, { value: 0, label: '2018/02/18' }, {
-                        value: 0,
-                        label: '2018/02/19'
-                    }, { value: 0, label: '2018/02/20' }, {
-                        value: 0,
-                        label: '2018/02/21'
-                    }, { value: 0, label: '2018/02/22' }, {
-                        value: 0,
-                        label: '2018/02/23'
-                    }, { value: 0, label: '2018/02/24' }, {
-                        value: 0,
-                        label: '2018/02/25'
-                    }, { value: 0, label: '2018/02/26' }, {
-                        value: 0,
-                        label: '2018/02/27'
-                    }, { value: 0, label: '2018/02/28' }, {
-                        value: 0,
-                        label: '2018/03/01'
-                    }, { value: 0, label: '2018/03/02' }, {
-                        value: 0,
-                        label: '2018/03/03'
-                    }, { value: 0, label: '2018/03/04' }, {
-                        value: 4,
-                        label: '2018/03/05'
-                    }, { value: 0, label: '2018/03/06' }, {
-                        value: 0,
-                        label: '2018/03/07'
-                    }, { value: 0, label: '2018/03/08' }, {
-                        value: 0,
-                        label: '2018/03/09'
-                    }, { value: 0, label: '2018/03/10' }, {
-                        value: 0,
-                        label: '2018/03/11'
-                    }, { value: 0, label: '2018/03/12' }, {
-                        value: 0,
-                        label: '2018/03/13'
-                    }, { value: 0, label: '2018/03/14' }, {
-                        value: 0,
-                        label: '2018/03/15'
-                    }, { value: 0, label: '2018/03/16' }, {
-                        value: 0,
-                        label: '2018/03/17'
-                    }, { value: 0, label: '2018/03/18' }, {
-                        value: 0,
-                        label: '2018/03/19'
-                    }, { value: 0, label: '2018/03/20' }, {
-                        value: 2,
-                        label: '2018/03/21'
-                    }, { value: 0, label: '2018/03/22' }, {
-                        value: 0,
-                        label: '2018/03/23'
-                    }, { value: 0, label: '2018/03/24' }, {
-                        value: 0,
-                        label: '2018/03/25'
-                    }, { value: 0, label: '2018/03/26' }, {
-                        value: 0,
-                        label: '2018/03/27'
-                    }, { value: 0, label: '2018/03/28' }, {
-                        value: 0,
-                        label: '2018/03/29'
-                    }, { value: 0, label: '2018/03/30' }, {
-                        value: 0,
-                        label: '2018/03/31'
-                    }, { value: 0, label: '2018/04/01' }, {
-                        value: 0,
-                        label: '2018/04/02'
-                    }, { value: 0, label: '2018/04/03' }, {
-                        value: 0,
-                        label: '2018/04/04'
-                    }, { value: 0, label: '2018/04/05' }, {
-                        value: 0,
-                        label: '2018/04/06'
-                    }, { value: 0, label: '2018/04/07' }, {
-                        value: 0,
-                        label: '2018/04/08'
-                    }, { value: 0, label: '2018/04/09' }, {
-                        value: 0,
-                        label: '2018/04/10'
-                    }, { value: 1, label: '2018/04/11' }, {
-                        value: 0,
-                        label: '2018/04/12'
-                    }, { value: 0, label: '2018/04/13' }, {
-                        value: 0,
-                        label: '2018/04/14'
-                    }, { value: 0, label: '2018/04/15' }, {
-                        value: 0,
-                        label: '2018/04/16'
-                    }, { value: 0, label: '2018/04/17' }, {
-                        value: 0,
-                        label: '2018/04/18'
-                    }, { value: 0, label: '2018/04/19' }, {
-                        value: 0,
-                        label: '2018/04/20'
-                    }, { value: 0, label: '2018/04/21' }, {
-                        value: 0,
-                        label: '2018/04/22'
-                    }, { value: 0, label: '2018/04/23' }, {
-                        value: 1,
-                        label: '2018/04/24'
-                    }, { value: 0, label: '2018/04/25' }, {
-                        value: 0,
-                        label: '2018/04/26'
-                    }, { value: 0, label: '2018/04/27' }, {
-                        value: 0,
-                        label: '2018/04/28'
-                    }, { value: 0, label: '2018/04/29' }, {
-                        value: 0,
-                        label: '2018/04/30'
-                    }, { value: 0, label: '2018/05/01' }, {
-                        value: 0,
-                        label: '2018/05/02'
-                    }, { value: 0, label: '2018/05/03' }, {
-                        value: 0,
-                        label: '2018/05/04'
-                    }, { value: 0, label: '2018/05/05' }, {
-                        value: 0,
-                        label: '2018/05/06'
-                    }, { value: 1, label: '2018/05/07' }, {
-                        value: 0,
-                        label: '2018/05/08'
-                    }, { value: 0, label: '2018/05/09' }, {
-                        value: 0,
-                        label: '2018/05/10'
-                    }, { value: 0, label: '2018/05/11' }, {
-                        value: 0,
-                        label: '2018/05/12'
-                    }, { value: 0, label: '2018/05/13' }, {
-                        value: 1,
-                        label: '2018/05/14'
-                    }, { value: 1, label: '2018/05/15' }, {
-                        value: 0,
-                        label: '2018/05/16'
-                    }, { value: 0, label: '2018/05/17' }]
+                    list: [
+                        { value: 50, label: '2017/11/18' },
+                        { value: 50, label: '2017/11/19' },
+                        { value: 80, label: '2017/11/20' },
+                        { value: 85, label: '2017/11/21' },
+                        { value: 30, label: '2017/11/22' },
+                        { value: 50, label: '2017/11/23' },
+                        { value: 54, label: '2017/11/24' },
+                        { value: 70, label: '2017/11/25' },
+                        { value: 46, label: '2017/11/26' },
+                        { value: 65, label: '2017/11/27' },
+                        { value: 32, label: '2017/11/28' },
+                        { value: 48, label: '2017/11/29' },
+                        { value: 94, label: '2017/11/30' },
+                        { value: 27, label: '2017/12/01' },
+                        { value: 73, label: '2017/12/02' },
+                        { value: 55, label: '2017/12/03' },
+                        { value: 96, label: '2017/12/04' },
+                        { value: 41, label: '2017/12/05' },
+                        { value: 28, label: '2017/12/06' },
+                        { value: 78, label: '2017/12/07' }
+                    ]
+
                 }, {
                     title: '当期签约量',
-                    list: [{ value: 0, label: '2017/11/18' }, {
-                        value: 0,
-                        label: '2017/11/19'
-                    }, { value: 0, label: '2017/11/20' }, {
-                        value: 0,
-                        label: '2017/11/21'
-                    }, { value: 0, label: '2017/11/22' }, {
-                        value: 0,
-                        label: '2017/11/23'
-                    }, { value: 0, label: '2017/11/24' }, {
-                        value: 0,
-                        label: '2017/11/25'
-                    }, { value: 0, label: '2017/11/26' }, {
-                        value: 0,
-                        label: '2017/11/27'
-                    }, { value: 0, label: '2017/11/28' }, {
-                        value: 0,
-                        label: '2017/11/29'
-                    }, { value: 0, label: '2017/11/30' }, {
-                        value: 0,
-                        label: '2017/12/01'
-                    }, { value: 0, label: '2017/12/02' }, {
-                        value: 0,
-                        label: '2017/12/03'
-                    }, { value: 0, label: '2017/12/04' }, {
-                        value: 0,
-                        label: '2017/12/05'
-                    }, { value: 0, label: '2017/12/06' }, {
-                        value: 0,
-                        label: '2017/12/07'
-                    }, { value: 0, label: '2017/12/08' }, {
-                        value: 0,
-                        label: '2017/12/09'
-                    }, { value: 0, label: '2017/12/10' }, {
-                        value: 0,
-                        label: '2017/12/11'
-                    }, { value: 0, label: '2017/12/12' }, {
-                        value: 0,
-                        label: '2017/12/13'
-                    }, { value: 0, label: '2017/12/14' }, {
-                        value: 0,
-                        label: '2017/12/15'
-                    }, { value: 0, label: '2017/12/16' }, {
-                        value: 0,
-                        label: '2017/12/17'
-                    }, { value: 1, label: '2017/12/18' }, {
-                        value: 1,
-                        label: '2017/12/19'
-                    }, { value: 0, label: '2017/12/20' }, {
-                        value: 0,
-                        label: '2017/12/21'
-                    }, { value: 0, label: '2017/12/22' }, {
-                        value: 0,
-                        label: '2017/12/23'
-                    }, { value: 0, label: '2017/12/24' }, {
-                        value: 0,
-                        label: '2017/12/25'
-                    }, { value: 0, label: '2017/12/26' }, {
-                        value: 0,
-                        label: '2017/12/27'
-                    }, { value: 0, label: '2017/12/28' }, {
-                        value: 0,
-                        label: '2017/12/29'
-                    }, { value: 0, label: '2017/12/30' }, {
-                        value: 0,
-                        label: '2017/12/31'
-                    }, { value: 0, label: '2018/01/01' }, {
-                        value: 1,
-                        label: '2018/01/02'
-                    }, { value: 0, label: '2018/01/03' }, {
-                        value: 0,
-                        label: '2018/01/04'
-                    }, { value: 0, label: '2018/01/05' }, {
-                        value: 0,
-                        label: '2018/01/06'
-                    }, { value: 0, label: '2018/01/07' }, {
-                        value: 0,
-                        label: '2018/01/08'
-                    }, { value: 0, label: '2018/01/09' }, {
-                        value: 0,
-                        label: '2018/01/10'
-                    }, { value: 0, label: '2018/01/11' }, {
-                        value: 0,
-                        label: '2018/01/12'
-                    }, { value: 0, label: '2018/01/13' }, {
-                        value: 0,
-                        label: '2018/01/14'
-                    }, { value: 0, label: '2018/01/15' }, {
-                        value: 0,
-                        label: '2018/01/16'
-                    }, { value: 0, label: '2018/01/17' }, {
-                        value: 0,
-                        label: '2018/01/18'
-                    }, { value: 0, label: '2018/01/19' }, {
-                        value: 0,
-                        label: '2018/01/20'
-                    }, { value: 0, label: '2018/01/21' }, {
-                        value: 0,
-                        label: '2018/01/22'
-                    }, { value: 0, label: '2018/01/23' }, {
-                        value: 0,
-                        label: '2018/01/24'
-                    }, { value: 0, label: '2018/01/25' }, {
-                        value: 0,
-                        label: '2018/01/26'
-                    }, { value: 0, label: '2018/01/27' }, {
-                        value: 0,
-                        label: '2018/01/28'
-                    }, { value: 0, label: '2018/01/29' }, {
-                        value: 0,
-                        label: '2018/01/30'
-                    }, { value: 0, label: '2018/01/31' }, {
-                        value: 0,
-                        label: '2018/02/01'
-                    }, { value: 0, label: '2018/02/02' }, {
-                        value: 0,
-                        label: '2018/02/03'
-                    }, { value: 0, label: '2018/02/04' }, {
-                        value: 0,
-                        label: '2018/02/05'
-                    }, { value: 0, label: '2018/02/06' }, {
-                        value: 0,
-                        label: '2018/02/07'
-                    }, { value: 0, label: '2018/02/08' }, {
-                        value: 0,
-                        label: '2018/02/09'
-                    }, { value: 0, label: '2018/02/10' }, {
-                        value: 0,
-                        label: '2018/02/11'
-                    }, { value: 1, label: '2018/02/12' }, {
-                        value: 0,
-                        label: '2018/02/13'
-                    }, { value: 0, label: '2018/02/14' }, {
-                        value: 0,
-                        label: '2018/02/15'
-                    }, { value: 0, label: '2018/02/16' }, {
-                        value: 0,
-                        label: '2018/02/17'
-                    }, { value: 0, label: '2018/02/18' }, {
-                        value: 0,
-                        label: '2018/02/19'
-                    }, { value: 0, label: '2018/02/20' }, {
-                        value: 0,
-                        label: '2018/02/21'
-                    }, { value: 0, label: '2018/02/22' }, {
-                        value: 0,
-                        label: '2018/02/23'
-                    }, { value: 0, label: '2018/02/24' }, {
-                        value: 0,
-                        label: '2018/02/25'
-                    }, { value: 0, label: '2018/02/26' }, {
-                        value: 0,
-                        label: '2018/02/27'
-                    }, { value: 0, label: '2018/02/28' }, {
-                        value: 0,
-                        label: '2018/03/01'
-                    }, { value: 0, label: '2018/03/02' }, {
-                        value: 0,
-                        label: '2018/03/03'
-                    }, { value: 0, label: '2018/03/04' }, {
-                        value: 2,
-                        label: '2018/03/05'
-                    }, { value: 0, label: '2018/03/06' }, {
-                        value: 0,
-                        label: '2018/03/07'
-                    }, { value: 0, label: '2018/03/08' }, {
-                        value: 0,
-                        label: '2018/03/09'
-                    }, { value: 0, label: '2018/03/10' }, {
-                        value: 0,
-                        label: '2018/03/11'
-                    }, { value: 0, label: '2018/03/12' }, {
-                        value: 0,
-                        label: '2018/03/13'
-                    }, { value: 0, label: '2018/03/14' }, {
-                        value: 0,
-                        label: '2018/03/15'
-                    }, { value: 0, label: '2018/03/16' }, {
-                        value: 0,
-                        label: '2018/03/17'
-                    }, { value: 0, label: '2018/03/18' }, {
-                        value: 0,
-                        label: '2018/03/19'
-                    }, { value: 0, label: '2018/03/20' }, {
-                        value: 0,
-                        label: '2018/03/21'
-                    }, { value: 0, label: '2018/03/22' }, {
-                        value: 0,
-                        label: '2018/03/23'
-                    }, { value: 0, label: '2018/03/24' }, {
-                        value: 0,
-                        label: '2018/03/25'
-                    }, { value: 0, label: '2018/03/26' }, {
-                        value: 0,
-                        label: '2018/03/27'
-                    }, { value: 0, label: '2018/03/28' }, {
-                        value: 0,
-                        label: '2018/03/29'
-                    }, { value: 0, label: '2018/03/30' }, {
-                        value: 0,
-                        label: '2018/03/31'
-                    }, { value: 0, label: '2018/04/01' }, {
-                        value: 0,
-                        label: '2018/04/02'
-                    }, { value: 0, label: '2018/04/03' }, {
-                        value: 0,
-                        label: '2018/04/04'
-                    }, { value: 0, label: '2018/04/05' }, {
-                        value: 0,
-                        label: '2018/04/06'
-                    }, { value: 0, label: '2018/04/07' }, {
-                        value: 0,
-                        label: '2018/04/08'
-                    }, { value: 0, label: '2018/04/09' }, {
-                        value: 0,
-                        label: '2018/04/10'
-                    }, { value: 0, label: '2018/04/11' }, {
-                        value: 0,
-                        label: '2018/04/12'
-                    }, { value: 0, label: '2018/04/13' }, {
-                        value: 0,
-                        label: '2018/04/14'
-                    }, { value: 0, label: '2018/04/15' }, {
-                        value: 0,
-                        label: '2018/04/16'
-                    }, { value: 0, label: '2018/04/17' }, {
-                        value: 0,
-                        label: '2018/04/18'
-                    }, { value: 0, label: '2018/04/19' }, {
-                        value: 0,
-                        label: '2018/04/20'
-                    }, { value: 0, label: '2018/04/21' }, {
-                        value: 0,
-                        label: '2018/04/22'
-                    }, { value: 0, label: '2018/04/23' }, {
-                        value: 0,
-                        label: '2018/04/24'
-                    }, { value: 0, label: '2018/04/25' }, {
-                        value: 0,
-                        label: '2018/04/26'
-                    }, { value: 0, label: '2018/04/27' }, {
-                        value: 0,
-                        label: '2018/04/28'
-                    }, { value: 0, label: '2018/04/29' }, {
-                        value: 0,
-                        label: '2018/04/30'
-                    }, { value: 0, label: '2018/05/01' }, {
-                        value: 0,
-                        label: '2018/05/02'
-                    }, { value: 0, label: '2018/05/03' }, {
-                        value: 0,
-                        label: '2018/05/04'
-                    }, { value: 0, label: '2018/05/05' }, {
-                        value: 0,
-                        label: '2018/05/06'
-                    }, { value: 0, label: '2018/05/07' }, {
-                        value: 0,
-                        label: '2018/05/08'
-                    }, { value: 0, label: '2018/05/09' }, {
-                        value: 0,
-                        label: '2018/05/10'
-                    }, { value: 0, label: '2018/05/11' }, {
-                        value: 0,
-                        label: '2018/05/12'
-                    }, { value: 0, label: '2018/05/13' }, {
-                        value: 0,
-                        label: '2018/05/14'
-                    }, { value: 0, label: '2018/05/15' }, {
-                        value: 0,
-                        label: '2018/05/16'
-                    }, { value: 0, label: '2018/05/17' }]
+                    list: [
+                        { value: 26, label: '2017/11/18' },
+                        { value: 40, label: '2017/11/19' },
+                        { value: 0, label: '2017/11/20' },
+                        { value: 15, label: '2017/11/21' },
+                        { value: 5, label: '2017/11/22' },
+                        { value: 48, label: '2017/11/23' },
+                        { value: 11, label: '2017/11/24' },
+                        { value: 0, label: '2017/11/25' },
+                        { value: 6, label: '2017/11/26' },
+                        { value: 0, label: '2017/11/27' },
+                        { value: 30, label: '2017/11/28' },
+                        { value: 12, label: '2017/11/29' },
+                        { value: 56, label: '2017/11/30' },
+                        { value: 7, label: '2017/12/01' },
+                        { value: 34, label: '2017/12/02' },
+                        { value: 5, label: '2017/12/03' },
+                        { value: 6, label: '2017/12/04' },
+                        { value: 1, label: '2017/12/05' },
+                        { value: 19, label: '2017/12/06' },
+                        { value: 22, label: '2017/12/07' }
+                    ]
                 }, {
                     title: '实际签约量',
-                    list: [{ value: 0, label: '2017/11/18' }, {
-                        value: 0,
-                        label: '2017/11/19'
-                    }, { value: 0, label: '2017/11/20' }, {
-                        value: 0,
-                        label: '2017/11/21'
-                    }, { value: 0, label: '2017/11/22' }, {
-                        value: 0,
-                        label: '2017/11/23'
-                    }, { value: 0, label: '2017/11/24' }, {
-                        value: 0,
-                        label: '2017/11/25'
-                    }, { value: 0, label: '2017/11/26' }, {
-                        value: 0,
-                        label: '2017/11/27'
-                    }, { value: 0, label: '2017/11/28' }, {
-                        value: 0,
-                        label: '2017/11/29'
-                    }, { value: 0, label: '2017/11/30' }, {
-                        value: 0,
-                        label: '2017/12/01'
-                    }, { value: 0, label: '2017/12/02' }, {
-                        value: 0,
-                        label: '2017/12/03'
-                    }, { value: 0, label: '2017/12/04' }, {
-                        value: 0,
-                        label: '2017/12/05'
-                    }, { value: 0, label: '2017/12/06' }, {
-                        value: 0,
-                        label: '2017/12/07'
-                    }, { value: 0, label: '2017/12/08' }, {
-                        value: 0,
-                        label: '2017/12/09'
-                    }, { value: 0, label: '2017/12/10' }, {
-                        value: 0,
-                        label: '2017/12/11'
-                    }, { value: 0, label: '2017/12/12' }, {
-                        value: 0,
-                        label: '2017/12/13'
-                    }, { value: 0, label: '2017/12/14' }, {
-                        value: 0,
-                        label: '2017/12/15'
-                    }, { value: 0, label: '2017/12/16' }, {
-                        value: 0,
-                        label: '2017/12/17'
-                    }, { value: 0, label: '2017/12/18' }, {
-                        value: 0,
-                        label: '2017/12/19'
-                    }, { value: 0, label: '2017/12/20' }, {
-                        value: 0,
-                        label: '2017/12/21'
-                    }, { value: 0, label: '2017/12/22' }, {
-                        value: 0,
-                        label: '2017/12/23'
-                    }, { value: 0, label: '2017/12/24' }, {
-                        value: 0,
-                        label: '2017/12/25'
-                    }, { value: 0, label: '2017/12/26' }, {
-                        value: 0,
-                        label: '2017/12/27'
-                    }, { value: 0, label: '2017/12/28' }, {
-                        value: 0,
-                        label: '2017/12/29'
-                    }, { value: 0, label: '2017/12/30' }, {
-                        value: 0,
-                        label: '2017/12/31'
-                    }, { value: 0, label: '2018/01/01' }, {
-                        value: 0,
-                        label: '2018/01/02'
-                    }, { value: 0, label: '2018/01/03' }, {
-                        value: 0,
-                        label: '2018/01/04'
-                    }, { value: 0, label: '2018/01/05' }, {
-                        value: 0,
-                        label: '2018/01/06'
-                    }, { value: 0, label: '2018/01/07' }, {
-                        value: 0,
-                        label: '2018/01/08'
-                    }, { value: 0, label: '2018/01/09' }, {
-                        value: 0,
-                        label: '2018/01/10'
-                    }, { value: 0, label: '2018/01/11' }, {
-                        value: 0,
-                        label: '2018/01/12'
-                    }, { value: 0, label: '2018/01/13' }, {
-                        value: 0,
-                        label: '2018/01/14'
-                    }, { value: 0, label: '2018/01/15' }, {
-                        value: 0,
-                        label: '2018/01/16'
-                    }, { value: 0, label: '2018/01/17' }, {
-                        value: 0,
-                        label: '2018/01/18'
-                    }, { value: 1, label: '2018/01/19' }, {
-                        value: 0,
-                        label: '2018/01/20'
-                    }, { value: 0, label: '2018/01/21' }, {
-                        value: 0,
-                        label: '2018/01/22'
-                    }, { value: 0, label: '2018/01/23' }, {
-                        value: 0,
-                        label: '2018/01/24'
-                    }, { value: 0, label: '2018/01/25' }, {
-                        value: 0,
-                        label: '2018/01/26'
-                    }, { value: 0, label: '2018/01/27' }, {
-                        value: 0,
-                        label: '2018/01/28'
-                    }, { value: 1, label: '2018/01/29' }, {
-                        value: 0,
-                        label: '2018/01/30'
-                    }, { value: 0, label: '2018/01/31' }, {
-                        value: 0,
-                        label: '2018/02/01'
-                    }, { value: 0, label: '2018/02/02' }, {
-                        value: 0,
-                        label: '2018/02/03'
-                    }, { value: 0, label: '2018/02/04' }, {
-                        value: 0,
-                        label: '2018/02/05'
-                    }, { value: 0, label: '2018/02/06' }, {
-                        value: 0,
-                        label: '2018/02/07'
-                    }, { value: 0, label: '2018/02/08' }, {
-                        value: 0,
-                        label: '2018/02/09'
-                    }, { value: 0, label: '2018/02/10' }, {
-                        value: 0,
-                        label: '2018/02/11'
-                    }, { value: 0, label: '2018/02/12' }, {
-                        value: 0,
-                        label: '2018/02/13'
-                    }, { value: 0, label: '2018/02/14' }, {
-                        value: 0,
-                        label: '2018/02/15'
-                    }, { value: 0, label: '2018/02/16' }, {
-                        value: 0,
-                        label: '2018/02/17'
-                    }, { value: 0, label: '2018/02/18' }, {
-                        value: 0,
-                        label: '2018/02/19'
-                    }, { value: 0, label: '2018/02/20' }, {
-                        value: 0,
-                        label: '2018/02/21'
-                    }, { value: 0, label: '2018/02/22' }, {
-                        value: 1,
-                        label: '2018/02/23'
-                    }, { value: 0, label: '2018/02/24' }, {
-                        value: 0,
-                        label: '2018/02/25'
-                    }, { value: 0, label: '2018/02/26' }, {
-                        value: 1,
-                        label: '2018/02/27'
-                    }, { value: 0, label: '2018/02/28' }, {
-                        value: 0,
-                        label: '2018/03/01'
-                    }, { value: 0, label: '2018/03/02' }, {
-                        value: 0,
-                        label: '2018/03/03'
-                    }, { value: 0, label: '2018/03/04' }, {
-                        value: 1,
-                        label: '2018/03/05'
-                    }, { value: 0, label: '2018/03/06' }, {
-                        value: 0,
-                        label: '2018/03/07'
-                    }, { value: 0, label: '2018/03/08' }, {
-                        value: 0,
-                        label: '2018/03/09'
-                    }, { value: 0, label: '2018/03/10' }, {
-                        value: 0,
-                        label: '2018/03/11'
-                    }, { value: 0, label: '2018/03/12' }, {
-                        value: 0,
-                        label: '2018/03/13'
-                    }, { value: 0, label: '2018/03/14' }, {
-                        value: 0,
-                        label: '2018/03/15'
-                    }, { value: 0, label: '2018/03/16' }, {
-                        value: 0,
-                        label: '2018/03/17'
-                    }, { value: 0, label: '2018/03/18' }, {
-                        value: 0,
-                        label: '2018/03/19'
-                    }, { value: 0, label: '2018/03/20' }, {
-                        value: 0,
-                        label: '2018/03/21'
-                    }, { value: 0, label: '2018/03/22' }, {
-                        value: 0,
-                        label: '2018/03/23'
-                    }, { value: 0, label: '2018/03/24' }, {
-                        value: 0,
-                        label: '2018/03/25'
-                    }, { value: 0, label: '2018/03/26' }, {
-                        value: 0,
-                        label: '2018/03/27'
-                    }, { value: 0, label: '2018/03/28' }, {
-                        value: 0,
-                        label: '2018/03/29'
-                    }, { value: 0, label: '2018/03/30' }, {
-                        value: 0,
-                        label: '2018/03/31'
-                    }, { value: 0, label: '2018/04/01' }, {
-                        value: 0,
-                        label: '2018/04/02'
-                    }, { value: 0, label: '2018/04/03' }, {
-                        value: 0,
-                        label: '2018/04/04'
-                    }, { value: 0, label: '2018/04/05' }, {
-                        value: 0,
-                        label: '2018/04/06'
-                    }, { value: 0, label: '2018/04/07' }, {
-                        value: 0,
-                        label: '2018/04/08'
-                    }, { value: 0, label: '2018/04/09' }, {
-                        value: 0,
-                        label: '2018/04/10'
-                    }, { value: 0, label: '2018/04/11' }, {
-                        value: 0,
-                        label: '2018/04/12'
-                    }, { value: 0, label: '2018/04/13' }, {
-                        value: 0,
-                        label: '2018/04/14'
-                    }, { value: 0, label: '2018/04/15' }, {
-                        value: 0,
-                        label: '2018/04/16'
-                    }, { value: 0, label: '2018/04/17' }, {
-                        value: 0,
-                        label: '2018/04/18'
-                    }, { value: 0, label: '2018/04/19' }, {
-                        value: 0,
-                        label: '2018/04/20'
-                    }, { value: 0, label: '2018/04/21' }, {
-                        value: 0,
-                        label: '2018/04/22'
-                    }, { value: 0, label: '2018/04/23' }, {
-                        value: 0,
-                        label: '2018/04/24'
-                    }, { value: 0, label: '2018/04/25' }, {
-                        value: 0,
-                        label: '2018/04/26'
-                    }, { value: 0, label: '2018/04/27' }, {
-                        value: 0,
-                        label: '2018/04/28'
-                    }, { value: 0, label: '2018/04/29' }, {
-                        value: 0,
-                        label: '2018/04/30'
-                    }, { value: 0, label: '2018/05/01' }, {
-                        value: 0,
-                        label: '2018/05/02'
-                    }, { value: 0, label: '2018/05/03' }, {
-                        value: 0,
-                        label: '2018/05/04'
-                    }, { value: 0, label: '2018/05/05' }, {
-                        value: 0,
-                        label: '2018/05/06'
-                    }, { value: 0, label: '2018/05/07' }, {
-                        value: 0,
-                        label: '2018/05/08'
-                    }, { value: 0, label: '2018/05/09' }, {
-                        value: 0,
-                        label: '2018/05/10'
-                    }, { value: 0, label: '2018/05/11' }, {
-                        value: 0,
-                        label: '2018/05/12'
-                    }, { value: 0, label: '2018/05/13' }, {
-                        value: 0,
-                        label: '2018/05/14'
-                    }, { value: 0, label: '2018/05/15' }, {
-                        value: 0,
-                        label: '2018/05/16'
-                    }, { value: 0, label: '2018/05/17' }]
-                }],
+                    list: [
+                        { value: 29, label: '2017/11/18' },
+                        { value: 40, label: '2017/11/19' },
+                        { value: 6, label: '2017/11/20' },
+                        { value: 19, label: '2017/11/21' },
+                        { value: 9, label: '2017/11/22' },
+                        { value: 49, label: '2017/11/23' },
+                        { value: 18, label: '2017/11/24' },
+                        { value: 2, label: '2017/11/25' },
+                        { value: 18, label: '2017/11/26' },
+                        { value: 2, label: '2017/11/27' },
+                        { value: 31, label: '2017/11/28' },
+                        { value: 20, label: '2017/11/29' },
+                        { value: 57, label: '2017/11/30' },
+                        { value: 10, label: '2017/12/01' },
+                        { value: 35, label: '2017/12/02' },
+                        { value: 25, label: '2017/12/03' },
+                        { value: 6, label: '2017/12/04' },
+                        { value: 3, label: '2017/12/05' },
+                        { value: 21, label: '2017/12/06' },
+                        { value: 24, label: '2017/12/07' }
+                    ]
+                }
+            ],
             barData: [
                 ['小米', 60.8],
                 ['三星', 58.4],
@@ -2567,10 +1901,25 @@ export default {
                 series: []
             },
             polygonsData: {
-                fields: ['语文', '数学', '外语', '物理', '化学'],
-                values: [
-                    [100, 200, 130, 140, 150]
+                axis: [
+                    { label: '语文', max: 150 },
+                    { label: '数学', max: 100 },
+                    { label: '外语', max: 100 },
+                    { label: '物理', max: 100 },
+                    { label: '化学', max: 100 },
+                ],
+                data: [
+                    { data: [100, 30, 78, 89, 100], class: '张同学' }
                 ]
+            },
+            barPointsData: {
+                "classes": ["咨询数", "在办流程数", "签约数"],
+                "data": [{ "value": 28, "label": "马晓岩", "class": "咨询数" }, { "value": 2, "label": "马晓岩", "class": "在办流程数" }, { "value": 2, "label": "马晓岩", "class": "签约数" }, { "value": 21, "label": "杨小萱", "class": "咨询数" }, { "value": 0, "label": "杨小萱", "class": "在办流程数" }, { "value": 1, "label": "杨小萱", "class": "签约数" }, { "value": 31, "label": "袁鑫", "class": "咨询数" }, { "value": 0, "label": "袁鑫", "class": "在办流程数" }, { "value": 0, "label": "袁鑫", "class": "签约数" }, { "value": 6, "label": "汤楠", "class": "咨询数" }, { "value": 1, "label": "汤楠", "class": "在办流程数" }, { "value": 1, "label": "汤楠", "class": "签约数" }, { "value": 26, "label": "琚琼", "class": "咨询数" }, { "value": 3, "label": "琚琼", "class": "在办流程数" }, { "value": 1, "label": "琚琼", "class": "签约数" }, { "value": 3, "label": "马春宇", "class": "咨询数" }, { "value": 8, "label": "马春宇", "class": "在办流程数" }, { "value": 0, "label": "马春宇", "class": "签约数" }],
+                "xAxis": ["马晓岩", "杨小萱", "袁鑫", "汤楠", "琚琼", "马春宇"],
+                "yAxis": [0, 31],
+                "data1": [{ "title": "转化率", "list": [{ "value": 0.07139999999999999, "label": "马晓岩" }, { "value": 0.047599999999999996, "label": "杨小萱" }, { "value": 0, "label": "袁鑫" }, { "value": 0.16670000000000001, "label": "汤楠" }, { "value": 0.0385, "label": "琚琼" }, { "value": 0, "label": "马春宇" }] }],
+                "classes1": ["转化率"],
+                "yAxis1": [0, 1]
             }
         };
     },
