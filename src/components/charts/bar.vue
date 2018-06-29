@@ -283,7 +283,8 @@ export default {
         initializeBar() {
             if (this.screen.length === 0) return;
             let wrap = d3.select(this.$refs.bar);
-            Object.keys(this.$refs).forEach(d => this.elements[d] = wrap.select(`.${d}`));      this.inventBar();
+            Object.keys(this.$refs).forEach(d => this.elements[d] = wrap.select(`.${d}`));
+            this.inventBar();
         },
         updateView(index) {
             let {paths, legend} = this.elements;

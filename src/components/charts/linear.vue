@@ -264,11 +264,11 @@ export default {
             let xScale = this.xScale,
                 yScale = this.yScale;
 
-            let mouseX = e.layerX,
-                x0 = xScale.invert(mouseX + 10);
-
             let data = this.screen[0].data,
                 bisect = d3.bisector(d => d.label).left;
+
+            let mouseX = e.layerX,
+                x0 = xScale.invert(mouseX + (this.innerWidth / data.length / 2));
 
             let index = x0 && bisect(data, x0) - 1;
             if (index >= data.length) {
