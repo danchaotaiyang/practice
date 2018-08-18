@@ -44,6 +44,7 @@ export default {
     },
     methods: {
         confined() {
+            console.log(1);
             this.ranW = this.range.clientWidth;
             this.ranH = this.range.clientHeight;
             this.wrpW = this.wrap.clientWidth;
@@ -85,6 +86,7 @@ export default {
 
 <style scoped>
 .drag-wrap {
+    display: block;
     -webkit-user-select: none;
     -moz-user-select: none;
     -ms-user-select: none;

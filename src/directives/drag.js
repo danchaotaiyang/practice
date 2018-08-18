@@ -1,6 +1,6 @@
 import Vue from 'vue';
 
-export const draggable = Vue.directive('draggable', {
+export const drag = Vue.directive('drag', {
     bind(el, {arg}) {
         const style = {position: arg, cursor: 'pointer', userSelect: 'none'};
         Object.keys(style).forEach(i => el.style[i] = style[i]);

@@ -3,15 +3,31 @@
     关于
     <chart-line class="line-bottom" :data="data" :width="width" height="19" stroke="#cccccc"></chart-line>
     <div class="drags">
-        <div class="draggable" v-draggable:fixed.random.confine>可以拖拽</div>
-        <div class="draggable" v-draggable:absolute.random.confine>可以拖拽可以拖拽可以拖拽</div>
-        <div class="draggable" v-draggable:absolute.random>依然可以拖拽</div>
+        <div class="draggable" v-drag:fixed.random.confine>可以拖拽</div>
+        <div class="draggable" v-drag:absolute.random.confine>可以拖拽可以拖拽可以拖拽</div>
+        <div class="draggable" v-drag:absolute.random>依然可以拖拽</div>
+        <div class="draggable" v-drag:fixed.random>依然可以拖拽</div>
     </div>
-    <hunt v-draggable:fixed.center></hunt>
+    <hunt v-drag:fixed.center></hunt>
     <div class="drags">
-        <draggable mode="absolute" confine random>
-            <div style="color: #ccc">测试拖拽</div>
-        </draggable>
+        <drag mode="absolute" confine random>
+            <div style="color: #ccc">absolute confine random</div>
+        </drag>
+        <drag mode="absolute" confine >
+            <div style="color: #ccc">absolute confine</div>
+        </drag>
+        <drag mode="absolute">
+            <div style="color: #ccc">absolute</div>
+        </drag>
+        <drag mode="fixed" confine random>
+            <div style="color: #ccc">fixed confine</div>
+        </drag>
+        <drag mode="fixed" confine>
+            <div style="color: #ccc">fixed confine</div>
+        </drag>
+        <drag mode="fixed">
+            <div style="color: #ccc">fixed</div>
+        </drag>
     </div>
 </div>
 </template>
@@ -19,10 +35,10 @@
 <script>
 import ChartLine from '@/basic/chartLine';
 import Hunt from '@/components/hunt';
-import Draggable from '@/components/draggable';
+import Drag from '@/components/drag';
 
 export default {
-    components: {ChartLine, Hunt, Draggable},
+    components: {ChartLine, Hunt, Drag},
     data() {
         return {
             width: 600,
@@ -57,6 +73,7 @@ export default {
     width: 600px;
     height: 400px;
     background-color: #333;
+    overflow: hidden;
 }
 
 .draggable {
